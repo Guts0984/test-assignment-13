@@ -142,12 +142,15 @@ Implemented screens: search (filters, sort and page in the URL, facets with coun
 
 Done and tested: everything in the sections above, the API, both API copies behind nginx, and the stack from `cp .env.example .env && docker compose up --build`.
 
+**Tests.** Vitest integration tests run against real Postgres, Redis, Meilisearch and MinIO. Playwright e2e runs in CI as its own job against the full docker compose stack (login, live bidding, search and filters, seller flow, roles, registration, favourites, notifications). Run it locally with `docker compose up -d --build`, then `pnpm --filter @auction/web exec playwright test`. The e2e specs share one seeded database, so a spec that depends on timing can occasionally fail on a slow runner; re-run before suspecting the code.
+
 **Not done (be aware):**
 
-- Playwright e2e (the four required scenarios) and the `pnpm acceptance` script for the 20 acceptance rows. The behaviours behind them are covered by integration tests and were spot-checked on the real stack, but not scripted as e2e.
-- Web screens for seller (create/edit lot, photo upload, ship), moderator queue and finance report. Their API endpoints exist and are tested; there is no UI yet.
-- Registration screen, notifications bell, favourites UI, "buy now" and "pay" buttons (endpoints exist).
+- Scripted e2e for anti-snipe extension (needs the test clock) and the full money flow (top-up, bid, pay, ship, confirm, payout). Both are covered by integration tests. `pnpm acceptance` scripts only part of the 20 acceptance rows.
+- API business logic still lives in controllers; there are no separate `*.service.ts` files yet.
+- nginx answers its own errors (413, 429, 502 and so on) in its default format, not the API's JSON error shape.
 - `steiger` (FSD linter) is not wired into CI.
+- If Redis is down the rate limiter falls back to a per-process counter, so each API copy limits on its own and the effective limit is looser. Bids and payments never depend on Redis.
 
 ## API (`apps/api`)
 
