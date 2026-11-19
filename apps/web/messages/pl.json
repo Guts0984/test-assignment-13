@@ -1,0 +1,78 @@
+{
+  "nav": {
+    "search": "Szukaj",
+    "wallet": "Portfel",
+    "login": "Zaloguj",
+    "logout": "Wyloguj"
+  },
+  "search": {
+    "title": "Aukcje",
+    "q": "Szukaj po tytule",
+    "sort": "Sortowanie",
+    "relevance": "Trafność",
+    "endingSoon": "Wkrótce koniec",
+    "newest": "Najnowsze",
+    "priceAsc": "Cena ↑",
+    "priceDesc": "Cena ↓",
+    "noBids": "Bez ofert",
+    "endingSoonOnly": "Kończą się w ciągu godziny",
+    "found": "Znaleziono: {count}",
+    "bids": "{count, plural, one {# oferta} few {# oferty} many {# ofert} other {# oferty}}",
+    "error": "Wyszukiwanie jest chwilowo niedostępne. Spróbuj za minutę.",
+    "empty": "Nic nie znaleziono",
+    "price": "Cena",
+    "category": "Kategoria",
+    "city": "Miasto",
+    "condition": "Stan"
+  },
+  "lot": {
+    "currentPrice": "Aktualna cena",
+    "timeLeft": "Pozostało",
+    "ended": "Zakończono",
+    "reserveMet": "Cena minimalna osiągnięta",
+    "reserveNotMet": "Cena minimalna nieosiągnięta",
+    "manual": "Oferta",
+    "auto": "Automat (maksimum)",
+    "amount": "Kwota, ₴",
+    "placeBid": "Licytuj",
+    "minNext": "Minimum: {amount}",
+    "leading": "Prowadzisz",
+    "outbid": "Przebił Cię automat",
+    "history": "Historia ofert",
+    "autoMark": "automat",
+    "you": "ty",
+    "buyNow": "Kup teraz",
+    "pay": "Zapłać",
+    "notFound": "Nie znaleziono aukcji",
+    "connection": "Na żywo"
+  },
+  "wallet": {
+    "title": "Portfel",
+    "available": "Dostępne",
+    "held": "W kaucjach",
+    "balance": "Razem",
+    "topup": "Doładuj",
+    "amount": "Kwota, ₴",
+    "history": "Historia",
+    "signin": "Zaloguj się, aby zobaczyć portfel",
+    "paymentDone": "Płatność: {status}"
+  },
+  "auth": {
+    "email": "E-mail",
+    "password": "Hasło",
+    "login": "Zaloguj",
+    "name": "Imię",
+    "register": "Zarejestruj",
+    "invalid": "Zły e-mail lub hasło"
+  },
+  "errors": {
+    "BID_TOO_LOW": "Oferta za niska (minimum {minNextBid})",
+    "INSUFFICIENT_FUNDS": "Za mało środków na kaucję",
+    "LOT_ENDED": "Aukcja zakończona",
+    "OWN_LOT": "Nie możesz licytować własnej aukcji",
+    "RATE_LIMITED": "Za dużo żądań, spróbuj później",
+    "VALIDATION_FAILED": "Sprawdź pola formularza",
+    "UNAUTHENTICATED": "Zaloguj się",
+    "generic": "Coś poszło nie tak"
+  }
+}

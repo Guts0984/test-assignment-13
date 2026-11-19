@@ -186,17 +186,30 @@ services:
       <<: *api-env
       NODE_ID: b
 
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:3000/uk >/dev/null || exit 1']
+      interval: 3s
+      timeout: 4s
+      retries: 30
+
   nginx:
     build: infra/nginx
     restart: unless-stopped
     ports:
-      - '8080:8080'
+      - '${HTTP_PORT:-8080}:8080'
     depends_on:
       api-a:
         condition: service_healthy
       api-b:
         condition: service_healthy
       minio:
+        condition: service_healthy
+      web:
         condition: service_healthy
 
 volumes:

@@ -1,0 +1,59 @@
+'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { type z } from 'zod';
+import { loginInputSchema } from '@auction/shared';
+import { authControllerLogin } from '../../shared/api/generated/client';
+import { isApiError } from '../../shared/api/fetcher';
+
+type Values = z.input<typeof loginInputSchema>;
+
+export const LoginForm = () => {
+  const t = useTranslations('auth');
+  const router = useRouter();
+  const { register, handleSubmit, formState } = useForm<Values>({
+    resolver: zodResolver(loginInputSchema),
+    defaultValues: { email: '', password: '' },
+  });
+  const login = useMutation({
+    mutationFn: (v: Values) => authControllerLogin(v),
+    onSuccess: () => router.push('wallet'),
+  });
+  const field = (name: keyof Values, label: string, type: string) => (
+    <div>
+      <label htmlFor={name} className="block text-sm font-medium">
+        {label}
+      </label>
+      <input
+        id={name}
+        type={type}
+        autoComplete={name === 'email' ? 'username' : 'current-password'}
+        aria-invalid={formState.errors[name] ? true : undefined}
+        className="mt-1 w-full rounded border px-3 py-2"
+        {...register(name)}
+      />
+      <p role="alert" className="text-sm text-red-600">
+        {formState.errors[name]?.message ? String(formState.errors[name]?.message) : ''}
+      </p>
+    </div>
+  );
+  return (
+    <form onSubmit={handleSubmit((v) => login.mutate(v))} className="max-w-sm space-y-3" noValidate>
+      {field('email', t('email'), 'email')}
+      {field('password', t('password'), 'password')}
+      <p role="alert" className="text-sm text-red-600">
+        {isApiError(login.error) ? t('invalid') : ''}
+      </p>
+      <button
+        type="submit"
+        disabled={login.isPending}
+        className="rounded bg-blue-600 px-4 py-2 text-white disabled:opacity-50"
+      >
+        {t('login')}
+      </button>
+    </form>
+  );
+};

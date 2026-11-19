@@ -27,6 +27,13 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
+      - name: Generated API client and OpenAPI document must be committed
+        run: |
+          set -a; . ./.env.example; set +a
+          pnpm --filter @auction/api build
+          (cd apps/api && node dist/openapi-cli.js openapi.json)
+          pnpm --filter @auction/web api:generate
+          git diff --exit-code apps/api/openapi.json apps/web/src/shared/api/generated
 
   stack:
     name: docker compose up (small seed)

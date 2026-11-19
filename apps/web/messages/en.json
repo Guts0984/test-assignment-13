@@ -1,0 +1,78 @@
+{
+  "nav": {
+    "search": "Search",
+    "wallet": "Wallet",
+    "login": "Sign in",
+    "logout": "Sign out"
+  },
+  "search": {
+    "title": "Lots",
+    "q": "Search by title",
+    "sort": "Sort",
+    "relevance": "Relevance",
+    "endingSoon": "Ending soon",
+    "newest": "Newest",
+    "priceAsc": "Price ↑",
+    "priceDesc": "Price ↓",
+    "noBids": "No bids",
+    "endingSoonOnly": "Ending within an hour",
+    "found": "Found: {count}",
+    "bids": "{count, plural, one {# bid} other {# bids}}",
+    "error": "Search is temporarily unavailable. Try again in a minute.",
+    "empty": "Nothing found",
+    "price": "Price",
+    "category": "Category",
+    "city": "City",
+    "condition": "Condition"
+  },
+  "lot": {
+    "currentPrice": "Current price",
+    "timeLeft": "Time left",
+    "ended": "Ended",
+    "reserveMet": "Reserve met",
+    "reserveNotMet": "Reserve not met",
+    "manual": "Bid",
+    "auto": "Autobid (maximum)",
+    "amount": "Amount, ₴",
+    "placeBid": "Place bid",
+    "minNext": "Minimum: {amount}",
+    "leading": "You are leading",
+    "outbid": "You were outbid by an autobid",
+    "history": "Bid history",
+    "autoMark": "autobid",
+    "you": "you",
+    "buyNow": "Buy now",
+    "pay": "Pay",
+    "notFound": "Lot not found",
+    "connection": "Live updates"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "available": "Available",
+    "held": "Held as deposits",
+    "balance": "Total",
+    "topup": "Top up",
+    "amount": "Amount, ₴",
+    "history": "History",
+    "signin": "Sign in to see your wallet",
+    "paymentDone": "Payment: {status}"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "login": "Sign in",
+    "name": "Name",
+    "register": "Register",
+    "invalid": "Wrong email or password"
+  },
+  "errors": {
+    "BID_TOO_LOW": "Bid too low (minimum {minNextBid})",
+    "INSUFFICIENT_FUNDS": "Not enough funds for the deposit",
+    "LOT_ENDED": "This lot has ended",
+    "OWN_LOT": "You cannot bid on your own lot",
+    "RATE_LIMITED": "Too many requests, try again later",
+    "VALIDATION_FAILED": "Check the form fields",
+    "UNAUTHENTICATED": "Please sign in",
+    "generic": "Something went wrong"
+  }
+}

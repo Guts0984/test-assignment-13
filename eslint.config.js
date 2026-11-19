@@ -31,6 +31,7 @@ export default tseslint.config(
       '**/.turbo/**',
       '**/generated/**',
       '**/next-env.d.ts',
+      'apps/web/postcss.config.cjs',
     ],
   },
   js.configs.recommended,
@@ -91,6 +92,17 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-class-instance-assignment': 'off',
       '@typescript-eslint/require-await': 'off',
       '@typescript-eslint/no-confusing-void-expression': 'off',
+    },
+  },
+  {
+    files: ['apps/web/**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-confusing-void-expression': 'off',
+      '@typescript-eslint/no-deprecated': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: { attributes: false } }],
+      '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+      '@typescript-eslint/no-unnecessary-type-conversion': 'off',
     },
   },
   {
