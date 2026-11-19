@@ -10,6 +10,7 @@ export default defineConfig({
       mode: 'single',
       override: { mutator: { path: 'src/shared/api/fetcher.ts', name: 'apiFetch' } },
       clean: true,
+      prettier: true,
     },
   },
 });
