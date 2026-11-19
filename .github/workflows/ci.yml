@@ -34,6 +34,7 @@ jobs:
           pnpm --filter @auction/api build
           (cd apps/api && node dist/openapi-cli.js openapi.json)
           pnpm --filter @auction/web api:generate
+          pnpm exec prettier --write apps/api/openapi.json apps/web/src/shared/api/generated
           git diff --exit-code apps/api/openapi.json apps/web/src/shared/api/generated
 
   stack:
