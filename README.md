@@ -136,6 +136,10 @@ minutes; after that the lot is claimable again and the slow moderator's decision
 
 REST + OpenAPI (`/docs`, generated into `apps/api/openapi.json` by `pnpm --filter @auction/api openapi:generate`) + Socket.IO over the Redis adapter. Every route must declare a policy (`@Public`, `@Optional`, `@Roles(...)`); a route without one answers 403 to everyone. Errors always look like `{ error: { code, message, details?, meta? }, requestId }`. State-changing requests need the `X-Requested-With: auction-web` header and a same-site Origin (CSRF); login is rate limited per address and locks an account after 5 failures; limits count the real client address and fall back to memory if Redis is down. Sockets authenticate from the session cookie at the handshake and can only ever join their own `user:` room.
 
+## nginx (`infra/nginx`)
+
+The only published port is 8080. nginx balances `/api/*` (prefix removed) and `/socket.io` across `api-a` and `api-b` (websocket upgrade, no sticky sessions: the Redis adapter connects the copies), serves public photos from the `photos-public` bucket (GET only) and accepts browser uploads only as POST to `/upload/photos-private`. It sets `X-Forwarded-For` from the TCP peer and discards what the client sent, so a spoofed header cannot choose a rate-limit bucket; `limit_req` and `limit_conn` count by real address; short header/body timeouts defend against slow clients. `?node=a` or `?node=b` pins a request to one copy (used to prove cross-copy behaviour).
+
 ## Worker, Redis, search, photos, mail (`apps/worker`, `packages/platform`)
 
 | Store       | Holds                                                                                                  | If lost                                                                                                                                                                     |

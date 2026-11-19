@@ -186,6 +186,19 @@ services:
       <<: *api-env
       NODE_ID: b
 
+  nginx:
+    build: infra/nginx
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    depends_on:
+      api-a:
+        condition: service_healthy
+      api-b:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
 volumes:
   postgres-data:
   meili-data:
