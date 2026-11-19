@@ -63,6 +63,7 @@ export const applyAppGrants = async (pool: pg.Pool, user: string): Promise<void>
     `GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA provider TO ${user}`,
     `GRANT DELETE ON ${deletable} TO ${user}`,
     `GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO ${user}`,
+    `GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA provider TO ${user}`,
     // The migration bookkeeping table is not the application's business.
     `REVOKE ALL ON public.schema_migrations FROM ${user}`,
   ];

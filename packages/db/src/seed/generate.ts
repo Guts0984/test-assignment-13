@@ -231,7 +231,11 @@ const planLots = (cfg: SeedConfig, rng: Rng, sellers: readonly number[]): LotPla
   return statuses.map((status, i): LotPlan => {
     const idx = i + 1;
     const start = 5_00 * (1 + Math.floor(Math.exp(rng.next() * Math.log(600))));
-    const weight = BID_WEIGHT[status] ?? (status === 'ended_unsold' && rng.chance(0.4) ? 3 : 0);
+    // About one live lot in six has no bids yet (so "no bids" and "buy now" have something to find).
+    const weight =
+      status === 'active' && rng.chance(0.17)
+        ? 0
+        : (BID_WEIGHT[status] ?? (status === 'ended_unsold' && rng.chance(0.4) ? 3 : 0));
     const mult = 0.4 + rng.next() * 1.2;
     const manualOnly = status === 'active' && (firstManualActive || rng.chance(0.3));
     if (status === 'active') firstManualActive = false;

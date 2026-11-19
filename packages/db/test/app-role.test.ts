@@ -150,6 +150,19 @@ describe('the application role cannot defeat the database guarantees', () => {
     expect(sqlState(err2)).toBe(FORBIDDEN);
   });
 
+  it('can write to the payment stub tables, including their id sequences (regression: 500 on every payment decision)', async () => {
+    const p = await app.query<{ id: string }>(
+      `INSERT INTO provider.payments (amount, reference) VALUES (100, $1) RETURNING id`,
+      [randomUUID()],
+    );
+    await app.query(
+      `INSERT INTO provider.webhook_events (payment_id, event, deliver_at) VALUES ($1, 'payment.succeeded', now())`,
+      [p.rows[0]?.id],
+    );
+    await app.query(`INSERT INTO outbox (topic) VALUES ('lot.upsert')`);
+    await app.query(`INSERT INTO notifications (user_id, kind) SELECT id, 'x' FROM users LIMIT 0`);
+  });
+
   it('grants are idempotent and survive a second run', async () => {
     await applyAppGrants(t.pool, APP_USER);
     await applyAppGrants(t.pool, APP_USER);
