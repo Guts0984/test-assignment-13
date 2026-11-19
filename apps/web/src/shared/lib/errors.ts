@@ -1,31 +1,29 @@
 'use client';
 import { useTranslations } from 'next-intl';
 import { isApiError } from '../api/fetcher';
+import { useMoney } from './money';
 
-/** Turns an API error code into text in the viewer's language. */
+/** Turns a validation code (a Zod message such as INVALID_EMAIL) into text in the viewer's language. */
+export const useFieldText = (): ((code: string | undefined) => string) => {
+  const f = useTranslations('fields');
+  return (code) => (code && f.has(code) ? f(code) : f('generic'));
+};
+
+/**
+ * Turns an API error into text in the viewer's language. Every code the API can return has a translation
+ * (messages `errors.<CODE>`); an unknown code or a non-API error gets the generic text, never the raw English message.
+ */
 export const useErrorText = (): ((e: unknown) => string) => {
   const t = useTranslations('errors');
-  const f = useTranslations('fields');
+  const fieldText = useFieldText();
+  const money = useMoney();
   return (e) => {
     if (!isApiError(e)) return t('generic');
-    const known = [
-      'BID_TOO_LOW',
-      'INSUFFICIENT_FUNDS',
-      'LOT_ENDED',
-      'OWN_LOT',
-      'RATE_LIMITED',
-      'VALIDATION_FAILED',
-      'UNAUTHENTICATED',
-    ];
     if (e.code === 'VALIDATION_FAILED' && e.details.length > 0) {
-      return e.details
-        .map((d) => (f.has(d.message as 'generic') ? f(d.message as 'generic') : f('generic')))
-        .join('; ');
+      return e.details.map((d) => fieldText(d.message)).join('; ');
     }
-    if (!known.includes(e.code)) return e.message || t('generic');
-    return t(e.code as 'BID_TOO_LOW', {
-      minNextBid:
-        typeof e.meta['minNextBid'] === 'number' ? String(e.meta['minNextBid'] / 100) : '',
-    });
+    if (!t.has(e.code)) return t('generic');
+    const min = e.meta['minNextBid'];
+    return t(e.code, { minNextBid: typeof min === 'number' ? money(min) : '' });
   };
 };

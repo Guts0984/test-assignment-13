@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useLiveLot } from '../../entities/lot/live';
 import { LotActions } from '../../features/lot-actions/ui';
+import { FavoriteToggle } from '../../features/favorite-toggle/ui';
 import { PlaceBidForm } from '../../features/place-bid/ui';
 import {
   getCatalogControllerLotQueryKey,
@@ -54,12 +55,16 @@ export const LotView = ({ id }: { id: string }) => {
           <p data-testid="price" className="text-3xl font-bold">
             {money(price)}
           </p>
-          <p data-testid="bid-count">{bidCount}</p>
+          <p data-testid="bid-count">{t('bids', { count: bidCount })}</p>
         </div>
         <div>
           <p className="text-sm text-gray-600">{t('timeLeft')}</p>
           <p data-testid="time-left" className="text-3xl font-bold" aria-live="off">
-            {left === null ? '—' : left === 0 ? t('ended') : formatLeft(left)}
+            {left === null
+              ? '—'
+              : left === 0
+                ? t('ended')
+                : formatLeft(left, (count) => t('daysShort', { count }))}
           </p>
         </div>
         {reserveMet !== null ? (
@@ -78,6 +83,7 @@ export const LotView = ({ id }: { id: string }) => {
           }
         />
       ) : null}
+      {me.data?.role === 'user' ? <FavoriteToggle lotId={id} /> : null}
       {me.data?.role === 'user' ? (
         <LotActions
           lotId={id}

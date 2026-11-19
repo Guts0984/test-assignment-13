@@ -1,5 +1,5 @@
 'use client';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import { TopUpForm } from '../../features/top-up/ui';
 import { useMeControllerWallet } from '../../shared/api/generated/client';
 import { useMoney } from '../../shared/lib/money';
@@ -7,6 +7,7 @@ import { useMoney } from '../../shared/lib/money';
 export const WalletView = () => {
   const t = useTranslations('wallet');
   const money = useMoney();
+  const format = useFormatter();
   const w = useMeControllerWallet({ query: { retry: false } });
   if (w.isError)
     return (
@@ -36,7 +37,12 @@ export const WalletView = () => {
       <ul className="divide-y text-sm">
         {w.data?.history.map((h) => (
           <li key={`${h.at}${h.kind}${h.lotId ?? ''}`} className="flex justify-between py-1">
-            <span>{h.kind}</span>
+            <span>
+              {t(`kinds.${t.has(`kinds.${h.kind}`) ? h.kind : 'other'}`)}
+              <time dateTime={h.at} className="ml-2 text-gray-500">
+                {format.dateTime(new Date(h.at), { dateStyle: 'medium', timeStyle: 'short' })}
+              </time>
+            </span>
             <span>{money(h.availableDelta)}</span>
           </li>
         ))}

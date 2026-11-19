@@ -6,7 +6,12 @@
     "logout": "Wyloguj",
     "moderation": "Moderacja",
     "sell": "Sprzedaj",
-    "finance": "Finanse"
+    "finance": "Finanse",
+    "register": "Rejestracja",
+    "favorites": "Ulubione",
+    "notifications": "Powiadomienia",
+    "notificationsUnread": "Powiadomienia, nieprzeczytane: {count}",
+    "language": "Język"
   },
   "search": {
     "title": "Aukcje",
@@ -26,7 +31,14 @@
     "price": "Cena",
     "category": "Kategoria",
     "city": "Miasto",
-    "condition": "Stan"
+    "condition": "Stan",
+    "prevPage": "Poprzednia strona",
+    "nextPage": "Następna strona",
+    "invalidParams": "Parametry wyszukiwania w adresie są nieprawidłowe. Zmień lub zresetuj filtry.",
+    "resetFilters": "Resetuj filtry",
+    "priceMin": "Cena od, ₴",
+    "priceMax": "Cena do, ₴",
+    "apply": "Zastosuj"
   },
   "lot": {
     "currentPrice": "Aktualna cena",
@@ -53,7 +65,11 @@
     "tracking": "Numer przesyłki",
     "ship": "Oznacz jako wysłane",
     "confirmReceipt": "Potwierdź odbiór",
-    "completed": "Transakcja zakończona"
+    "completed": "Transakcja zakończona",
+    "bids": "{count, plural, one {# oferta} few {# oferty} many {# ofert} other {# oferty}}",
+    "daysShort": "{count} d",
+    "favorite": "Dodaj do ulubionych",
+    "unfavorite": "Usuń z ulubionych"
   },
   "wallet": {
     "title": "Portfel",
@@ -64,7 +80,21 @@
     "amount": "Kwota, ₴",
     "history": "Historia",
     "signin": "Zaloguj się, aby zobaczyć portfel",
-    "paymentDone": "Płatność: {status}"
+    "paymentDone": "Płatność: {status}",
+    "at": "Data",
+    "kinds": {
+      "topup": "Doładowanie",
+      "hold": "Blokada wadium",
+      "release": "Zwolnienie wadium",
+      "sale": "Sprzedaż",
+      "pay": "Płatność",
+      "forfeit": "Przepadek wadium",
+      "payout": "Wypłata",
+      "refund": "Zwrot",
+      "commission": "Prowizja",
+      "won": "Wygrana",
+      "other": "Operacja"
+    }
   },
   "auth": {
     "email": "E-mail",
@@ -73,7 +103,11 @@
     "name": "Imię",
     "register": "Zarejestruj",
     "invalid": "Zły e-mail lub hasło",
-    "already": "Jesteś już zalogowany jako {name}"
+    "already": "Jesteś już zalogowany jako {name}",
+    "registerTitle": "Załóż konto",
+    "registerHint": "Masz już konto?",
+    "loginHint": "Nie masz konta?",
+    "passwordHint": "Co najmniej 8 znaków"
   },
   "errors": {
     "BID_TOO_LOW": "Oferta za niska (minimum {minNextBid})",
@@ -83,7 +117,37 @@
     "RATE_LIMITED": "Za dużo żądań, spróbuj później",
     "VALIDATION_FAILED": "Sprawdź pola formularza",
     "UNAUTHENTICATED": "Zaloguj się",
-    "generic": "Coś poszło nie tak"
+    "generic": "Coś poszło nie tak",
+    "MALFORMED_JSON": "Nieprawidłowe żądanie",
+    "IDEMPOTENCY_KEY_REQUIRED": "Nieprawidłowe żądanie, spróbuj ponownie",
+    "INVALID_CREDENTIALS": "Nieprawidłowy e-mail lub hasło",
+    "FORBIDDEN": "Brak uprawnień do tej czynności",
+    "CSRF_REJECTED": "Żądanie odrzucone, odśwież stronę",
+    "STAFF_CANNOT_TRADE": "Konta pracowników nie mogą licytować",
+    "NOT_FOUND": "Nie znaleziono",
+    "ROUTE_NOT_FOUND": "Nie znaleziono",
+    "CONFLICT": "Stan się zmienił, odśwież stronę",
+    "EMAIL_TAKEN": "Ten e-mail jest już zarejestrowany",
+    "LOT_NOT_ACTIVE": "Ten lot nie przyjmuje teraz ofert",
+    "LOT_STATUS_CONFLICT": "Stan lotu się zmienił, odśwież stronę",
+    "LOT_NOT_EDITABLE": "Tego lotu nie można już edytować",
+    "BID_NOT_ABOVE_OWN_MAX": "Nowa oferta musi być wyższa niż Twoje poprzednie maksimum",
+    "BID_INVALID_AMOUNT": "Nieprawidłowa kwota oferty",
+    "BUY_NOW_UNAVAILABLE": "„Kup teraz” jest niedostępne dla tego lotu",
+    "PAYMENT_NOT_DUE": "Nie ma teraz nic do zapłaty",
+    "PAYMENT_WINDOW_CLOSED": "Termin płatności minął",
+    "REVIEW_CLAIM_LOST": "Ten lot przejął już inny moderator",
+    "REVIEW_QUEUE_EMPTY": "Kolejka jest pusta",
+    "PHOTO_LIMIT_REACHED": "Osiągnięto limit zdjęć",
+    "PHOTO_NOT_READY": "Zdjęcie jest jeszcze przetwarzane",
+    "PAYLOAD_TOO_LARGE": "Plik jest za duży",
+    "UNSUPPORTED_MEDIA_TYPE": "Nieobsługiwany typ pliku",
+    "IDEMPOTENCY_KEY_REUSED": "To żądanie zostało już użyte z innymi danymi",
+    "WEBHOOK_SIGNATURE_INVALID": "Nieprawidłowy podpis",
+    "ACCOUNT_LOCKED": "Zbyt wiele nieudanych prób logowania. Spróbuj później",
+    "SEARCH_UNAVAILABLE": "Wyszukiwanie jest chwilowo niedostępne. Spróbuj za minutę.",
+    "SERVICE_UNAVAILABLE": "Usługa jest chwilowo niedostępna, spróbuj później",
+    "INTERNAL": "Coś poszło nie tak"
   },
   "fields": {
     "TOPUP_TOO_LARGE": "Maksymalne doładowanie to 1 000 000 ₴",
@@ -93,7 +157,15 @@
     "RESERVE_BELOW_START": "Cena minimalna nie może być niższa od ceny początkowej",
     "generic": "Nieprawidłowa wartość",
     "MONEY_TOO_LARGE": "Kwota jest za duża (maksimum 100 000 000 ₴)",
-    "NOT_A_NUMBER": "Wpisz kwotę cyframi, na przykład 1500 lub 1500,50"
+    "NOT_A_NUMBER": "Wpisz kwotę cyframi, na przykład 1500 lub 1500,50",
+    "INVALID_EMAIL": "Podaj prawidłowy e-mail",
+    "PASSWORD_REQUIRED": "Wpisz hasło",
+    "PASSWORD_TOO_SHORT": "Hasło musi mieć co najmniej 8 znaków",
+    "PASSWORD_TOO_LONG": "Hasło jest za długie (maksymalnie 128)",
+    "NAME_REQUIRED": "Podaj imię (od 2 do 40 znaków)",
+    "PRICE_RANGE_INVERTED": "„Od” nie może być większe niż „do”",
+    "INVALID_ID": "Nieprawidłowy identyfikator",
+    "NOT_AN_INTEGER": "Wymagana liczba całkowita"
   },
   "sell": {
     "title": "Nowa aukcja",
@@ -151,5 +223,34 @@
     "remove": "Zdejmij aukcję",
     "reason": "Powód",
     "removed": "Aukcja zdjęta"
+  },
+  "favorites": {
+    "title": "Ulubione",
+    "empty": "Nic jeszcze nie dodano",
+    "signin": "Zaloguj się, aby zobaczyć ulubione"
+  },
+  "notifications": {
+    "title": "Powiadomienia",
+    "empty": "Brak powiadomień",
+    "markRead": "Oznacz wszystkie jako przeczytane",
+    "signin": "Zaloguj się, aby zobaczyć powiadomienia",
+    "kinds": {
+      "outbid": "Twoja oferta na „{title}” została przebita. Aktualna cena: {price}",
+      "lot_removed": "Moderator usunął „{title}”",
+      "topup_succeeded": "Saldo zostało doładowane",
+      "won": "Wygrywasz „{title}”",
+      "lot_sold": "Twój lot „{title}” został sprzedany",
+      "lot_unsold": "„{title}” zakończono bez sprzedaży",
+      "lot_approved": "„{title}” zatwierdzono",
+      "lot_rejected": "„{title}” odrzucono",
+      "lot_paid": "„{title}” opłacono",
+      "lot_shipped": "„{title}” wysłano",
+      "payment_missed": "Minął termin płatności za „{title}”",
+      "second_chance": "„{title}” znów jest dla Ciebie dostępny",
+      "favorite_ending": "„{title}” z ulubionych wkrótce się kończy",
+      "favorite_reminder": "Przypomnienie o „{title}”",
+      "deposit_received": "Środki otrzymano",
+      "other": "Nowe zdarzenie"
+    }
   }
 }

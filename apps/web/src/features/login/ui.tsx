@@ -3,28 +3,39 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { type z } from 'zod';
-import { loginInputSchema } from '@auction/shared';
+import { z } from 'zod';
 import {
   authControllerLogin,
   getAuthControllerMeQueryKey,
   useAuthControllerMe,
 } from '../../shared/api/generated/client';
-import { isApiError } from '../../shared/api/fetcher';
+import { useErrorText, useFieldText } from '../../shared/lib/errors';
 
-type Values = z.input<typeof loginInputSchema>;
+/** Same rules as the API's login schema, but with codes we translate (the shared schema's "too small" is English). */
+const loginForm = z.object({
+  email: z.email({ error: 'INVALID_EMAIL' }),
+  password: z
+    .string()
+    .min(1, { error: 'PASSWORD_REQUIRED' })
+    .max(128, { error: 'PASSWORD_TOO_LONG' }),
+});
+
+type Values = z.input<typeof loginForm>;
 
 export const LoginForm = () => {
   const t = useTranslations('auth');
+  const errorText = useErrorText();
+  const fieldText = useFieldText();
   const router = useRouter();
   const locale = useLocale();
   const qc = useQueryClient();
   const me = useAuthControllerMe({ query: { retry: false } });
   const { register, handleSubmit, formState } = useForm<Values>({
-    resolver: zodResolver(loginInputSchema),
+    resolver: zodResolver(loginForm),
     defaultValues: { email: '', password: '' },
   });
   const login = useMutation({
@@ -50,7 +61,7 @@ export const LoginForm = () => {
         {...register(name)}
       />
       <p role="alert" className="text-sm text-red-600">
-        {formState.errors[name]?.message ? String(formState.errors[name]?.message) : ''}
+        {formState.errors[name] ? fieldText(formState.errors[name]?.message) : ''}
       </p>
     </div>
   );
@@ -65,7 +76,7 @@ export const LoginForm = () => {
       {field('email', t('email'), 'email')}
       {field('password', t('password'), 'password')}
       <p role="alert" className="text-sm text-red-600">
-        {isApiError(login.error) ? t('invalid') : ''}
+        {login.error ? errorText(login.error) : ''}
       </p>
       <button
         type="submit"
@@ -74,6 +85,12 @@ export const LoginForm = () => {
       >
         {t('login')}
       </button>
+      <p className="text-sm">
+        {t('loginHint')}{' '}
+        <Link href={`/${locale}/register`} className="underline">
+          {t('register')}
+        </Link>
+      </p>
     </form>
   );
 };

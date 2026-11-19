@@ -1,5 +1,10 @@
 import { expect, test } from '@playwright/test';
+import { type Page } from '@playwright/test';
 import { pickLot, signIn } from './helpers';
+
+/** The bid count is a plural phrase ("3 bids"); the number is its digits. */
+const bidCount = async (page: Page): Promise<number> =>
+  Number(((await page.getByTestId('bid-count').textContent()) ?? '').replace(/\D/g, ''));
 
 test('two browsers on one lot: a bid in the first updates price and bid count in the second without a reload', async ({
   browser,
@@ -12,7 +17,7 @@ test('two browsers on one lot: a bid in the first updates price and bid count in
   await b.page.goto(`/en/lots/${lot.id}`);
   await expect(b.page.getByTestId('price')).toBeVisible();
   const before = await b.page.getByTestId('price').textContent();
-  const countBefore = Number(await b.page.getByTestId('bid-count').textContent());
+  const countBefore = await bidCount(b.page);
 
   // The second browser must be live (socket connected) before the bid is placed.
   await expect(b.page.getByText(/Live updates/)).toBeVisible();
@@ -25,9 +30,7 @@ test('two browsers on one lot: a bid in the first updates price and bid count in
   // Acceptance: the other client sees it in under a second, with no navigation.
   await expect(b.page.getByTestId('price')).not.toHaveText(before ?? '', { timeout: 1500 });
   // An autobid answering the bid adds a second row, so assert "went up" rather than an exact number.
-  await expect
-    .poll(async () => Number(await b.page.getByTestId('bid-count').textContent()))
-    .toBeGreaterThan(countBefore);
+  await expect.poll(async () => bidCount(b.page)).toBeGreaterThan(countBefore);
   expect(b.page.url()).toContain(`/lots/${lot.id}`);
   await a.ctx.close();
   await b.ctx.close();

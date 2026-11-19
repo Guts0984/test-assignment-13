@@ -6,7 +6,12 @@
     "logout": "Sign out",
     "moderation": "Moderation",
     "sell": "Sell",
-    "finance": "Finance"
+    "finance": "Finance",
+    "register": "Register",
+    "favorites": "Favourites",
+    "notifications": "Notifications",
+    "notificationsUnread": "Notifications, unread: {count}",
+    "language": "Language"
   },
   "search": {
     "title": "Lots",
@@ -26,7 +31,14 @@
     "price": "Price",
     "category": "Category",
     "city": "City",
-    "condition": "Condition"
+    "condition": "Condition",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
+    "invalidParams": "The search parameters in the address are invalid. Change or reset the filters.",
+    "resetFilters": "Reset filters",
+    "priceMin": "Price from, ₴",
+    "priceMax": "Price to, ₴",
+    "apply": "Apply"
   },
   "lot": {
     "currentPrice": "Current price",
@@ -53,7 +65,11 @@
     "tracking": "Tracking number",
     "ship": "Mark as shipped",
     "confirmReceipt": "Confirm receipt",
-    "completed": "Deal completed"
+    "completed": "Deal completed",
+    "bids": "{count, plural, one {# bid} other {# bids}}",
+    "daysShort": "{count}d",
+    "favorite": "Add to favourites",
+    "unfavorite": "Remove from favourites"
   },
   "wallet": {
     "title": "Wallet",
@@ -64,7 +80,21 @@
     "amount": "Amount, ₴",
     "history": "History",
     "signin": "Sign in to see your wallet",
-    "paymentDone": "Payment: {status}"
+    "paymentDone": "Payment: {status}",
+    "at": "Date",
+    "kinds": {
+      "topup": "Top-up",
+      "hold": "Deposit hold",
+      "release": "Deposit released",
+      "sale": "Sale",
+      "pay": "Payment",
+      "forfeit": "Deposit forfeited",
+      "payout": "Payout",
+      "refund": "Refund",
+      "commission": "Commission",
+      "won": "Won",
+      "other": "Operation"
+    }
   },
   "auth": {
     "email": "Email",
@@ -73,7 +103,11 @@
     "name": "Name",
     "register": "Register",
     "invalid": "Wrong email or password",
-    "already": "You are already signed in as {name}"
+    "already": "You are already signed in as {name}",
+    "registerTitle": "Create an account",
+    "registerHint": "Already have an account?",
+    "loginHint": "No account yet?",
+    "passwordHint": "At least 8 characters"
   },
   "errors": {
     "BID_TOO_LOW": "Bid too low (minimum {minNextBid})",
@@ -83,7 +117,37 @@
     "RATE_LIMITED": "Too many requests, try again later",
     "VALIDATION_FAILED": "Check the form fields",
     "UNAUTHENTICATED": "Please sign in",
-    "generic": "Something went wrong"
+    "generic": "Something went wrong",
+    "MALFORMED_JSON": "Malformed request",
+    "IDEMPOTENCY_KEY_REQUIRED": "Malformed request, please try again",
+    "INVALID_CREDENTIALS": "Wrong email or password",
+    "FORBIDDEN": "You are not allowed to do this",
+    "CSRF_REJECTED": "Request rejected, reload the page",
+    "STAFF_CANNOT_TRADE": "Staff accounts cannot trade",
+    "NOT_FOUND": "Not found",
+    "ROUTE_NOT_FOUND": "Not found",
+    "CONFLICT": "The state has changed, reload the page",
+    "EMAIL_TAKEN": "This email is already registered",
+    "LOT_NOT_ACTIVE": "This lot is not accepting bids right now",
+    "LOT_STATUS_CONFLICT": "The lot state has changed, reload the page",
+    "LOT_NOT_EDITABLE": "This lot can no longer be edited",
+    "BID_NOT_ABOVE_OWN_MAX": "The new bid must be above your previous maximum",
+    "BID_INVALID_AMOUNT": "Invalid bid amount",
+    "BUY_NOW_UNAVAILABLE": "\"Buy now\" is not available for this lot",
+    "PAYMENT_NOT_DUE": "No payment is due right now",
+    "PAYMENT_WINDOW_CLOSED": "The payment window has closed",
+    "REVIEW_CLAIM_LOST": "Another moderator already took this lot",
+    "REVIEW_QUEUE_EMPTY": "The queue is empty",
+    "PHOTO_LIMIT_REACHED": "Photo limit reached",
+    "PHOTO_NOT_READY": "The photo is still being processed",
+    "PAYLOAD_TOO_LARGE": "The file is too large",
+    "UNSUPPORTED_MEDIA_TYPE": "Unsupported file type",
+    "IDEMPOTENCY_KEY_REUSED": "This request was already used with different data",
+    "WEBHOOK_SIGNATURE_INVALID": "Invalid signature",
+    "ACCOUNT_LOCKED": "Too many failed sign-in attempts. Try again later",
+    "SEARCH_UNAVAILABLE": "Search is temporarily unavailable. Try again in a minute.",
+    "SERVICE_UNAVAILABLE": "The service is temporarily unavailable, try again later",
+    "INTERNAL": "Something went wrong"
   },
   "fields": {
     "TOPUP_TOO_LARGE": "Maximum top-up is 1,000,000 ₴",
@@ -93,7 +157,15 @@
     "RESERVE_BELOW_START": "The reserve cannot be below the start price",
     "generic": "Invalid value",
     "MONEY_TOO_LARGE": "The amount is too large (maximum 100,000,000 ₴)",
-    "NOT_A_NUMBER": "Enter the amount in digits, for example 1500 or 1500.50"
+    "NOT_A_NUMBER": "Enter the amount in digits, for example 1500 or 1500.50",
+    "INVALID_EMAIL": "Enter a valid email",
+    "PASSWORD_REQUIRED": "Enter your password",
+    "PASSWORD_TOO_SHORT": "The password must be at least 8 characters",
+    "PASSWORD_TOO_LONG": "The password is too long (128 at most)",
+    "NAME_REQUIRED": "Enter a name (2 to 40 characters)",
+    "PRICE_RANGE_INVERTED": "\"From\" cannot be above \"to\"",
+    "INVALID_ID": "Invalid identifier",
+    "NOT_AN_INTEGER": "A whole number is required"
   },
   "sell": {
     "title": "New lot",
@@ -151,5 +223,34 @@
     "remove": "Remove lot",
     "reason": "Reason",
     "removed": "Lot removed"
+  },
+  "favorites": {
+    "title": "Favourites",
+    "empty": "You have not added anything yet",
+    "signin": "Sign in to see your favourites"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications yet",
+    "markRead": "Mark all as read",
+    "signin": "Sign in to see notifications",
+    "kinds": {
+      "outbid": "You were outbid on \"{title}\". Current price: {price}",
+      "lot_removed": "\"{title}\" was removed by a moderator",
+      "topup_succeeded": "Your balance was topped up",
+      "won": "You won \"{title}\"",
+      "lot_sold": "Your lot \"{title}\" was sold",
+      "lot_unsold": "\"{title}\" ended without a sale",
+      "lot_approved": "\"{title}\" was approved",
+      "lot_rejected": "\"{title}\" was rejected",
+      "lot_paid": "\"{title}\" was paid",
+      "lot_shipped": "\"{title}\" was shipped",
+      "payment_missed": "The payment window for \"{title}\" has passed",
+      "second_chance": "\"{title}\" is available to you again",
+      "favorite_ending": "\"{title}\" from your favourites ends soon",
+      "favorite_reminder": "Reminder about \"{title}\"",
+      "deposit_received": "Funds received",
+      "other": "New event"
+    }
   }
 }

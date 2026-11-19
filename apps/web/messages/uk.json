@@ -6,7 +6,12 @@
     "logout": "Вийти",
     "moderation": "Модерація",
     "sell": "Продати",
-    "finance": "Фінанси"
+    "finance": "Фінанси",
+    "register": "Реєстрація",
+    "favorites": "Обране",
+    "notifications": "Сповіщення",
+    "notificationsUnread": "Сповіщення, непрочитаних: {count}",
+    "language": "Мова"
   },
   "search": {
     "title": "Лоти",
@@ -26,7 +31,14 @@
     "price": "Ціна",
     "category": "Категорія",
     "city": "Місто",
-    "condition": "Стан"
+    "condition": "Стан",
+    "prevPage": "Попередня сторінка",
+    "nextPage": "Наступна сторінка",
+    "invalidParams": "Некоректні параметри пошуку в адресі. Змініть або скиньте фільтри.",
+    "resetFilters": "Скинути фільтри",
+    "priceMin": "Ціна від, ₴",
+    "priceMax": "Ціна до, ₴",
+    "apply": "Застосувати"
   },
   "lot": {
     "currentPrice": "Поточна ціна",
@@ -53,7 +65,11 @@
     "tracking": "Номер відстеження",
     "ship": "Відправити",
     "confirmReceipt": "Підтвердити отримання",
-    "completed": "Угоду завершено"
+    "completed": "Угоду завершено",
+    "bids": "{count, plural, one {# ставка} few {# ставки} many {# ставок} other {# ставки}}",
+    "daysShort": "{count} д",
+    "favorite": "Додати в обране",
+    "unfavorite": "Прибрати з обраного"
   },
   "wallet": {
     "title": "Гаманець",
@@ -64,7 +80,21 @@
     "amount": "Сума, ₴",
     "history": "Історія",
     "signin": "Увійдіть, щоб побачити гаманець",
-    "paymentDone": "Платіж: {status}"
+    "paymentDone": "Платіж: {status}",
+    "at": "Дата",
+    "kinds": {
+      "topup": "Поповнення",
+      "hold": "Застава",
+      "release": "Повернення застави",
+      "sale": "Продаж",
+      "pay": "Оплата",
+      "forfeit": "Утримання застави",
+      "payout": "Виплата",
+      "refund": "Повернення",
+      "commission": "Комісія",
+      "won": "Виграш",
+      "other": "Операція"
+    }
   },
   "auth": {
     "email": "Електронна пошта",
@@ -73,7 +103,11 @@
     "name": "Ім'я",
     "register": "Зареєструватися",
     "invalid": "Невірна пошта або пароль",
-    "already": "Ви вже увійшли як {name}"
+    "already": "Ви вже увійшли як {name}",
+    "registerTitle": "Реєстрація",
+    "registerHint": "Вже є акаунт?",
+    "loginHint": "Ще немає акаунта?",
+    "passwordHint": "Щонайменше 8 символів"
   },
   "errors": {
     "BID_TOO_LOW": "Ставка занадто низька (мінімум {minNextBid})",
@@ -83,7 +117,37 @@
     "RATE_LIMITED": "Забагато запитів, спробуйте пізніше",
     "VALIDATION_FAILED": "Перевірте поля форми",
     "UNAUTHENTICATED": "Увійдіть у систему",
-    "generic": "Щось пішло не так"
+    "generic": "Щось пішло не так",
+    "MALFORMED_JSON": "Некоректний запит",
+    "IDEMPOTENCY_KEY_REQUIRED": "Некоректний запит, спробуйте ще раз",
+    "INVALID_CREDENTIALS": "Невірна пошта або пароль",
+    "FORBIDDEN": "Недостатньо прав для цієї дії",
+    "CSRF_REJECTED": "Запит відхилено, оновіть сторінку",
+    "STAFF_CANNOT_TRADE": "Співробітники не можуть брати участь у торгах",
+    "NOT_FOUND": "Не знайдено",
+    "ROUTE_NOT_FOUND": "Не знайдено",
+    "CONFLICT": "Стан змінився, оновіть сторінку",
+    "EMAIL_TAKEN": "Ця пошта вже зареєстрована",
+    "LOT_NOT_ACTIVE": "Лот зараз не приймає ставок",
+    "LOT_STATUS_CONFLICT": "Стан лота змінився, оновіть сторінку",
+    "LOT_NOT_EDITABLE": "Цей лот уже не можна редагувати",
+    "BID_NOT_ABOVE_OWN_MAX": "Нова ставка має бути вищою за вашу попередню максимальну",
+    "BID_INVALID_AMOUNT": "Недопустима сума ставки",
+    "BUY_NOW_UNAVAILABLE": "«Купити зараз» недоступно для цього лота",
+    "PAYMENT_NOT_DUE": "Оплата зараз не потрібна",
+    "PAYMENT_WINDOW_CLOSED": "Час на оплату минув",
+    "REVIEW_CLAIM_LOST": "Цей лот уже взяв інший модератор",
+    "REVIEW_QUEUE_EMPTY": "Черга порожня",
+    "PHOTO_LIMIT_REACHED": "Досягнуто ліміт фото",
+    "PHOTO_NOT_READY": "Фото ще обробляється",
+    "PAYLOAD_TOO_LARGE": "Файл занадто великий",
+    "UNSUPPORTED_MEDIA_TYPE": "Непідтримуваний формат файлу",
+    "IDEMPOTENCY_KEY_REUSED": "Цей запит уже виконано з іншими даними",
+    "WEBHOOK_SIGNATURE_INVALID": "Недійсний підпис",
+    "ACCOUNT_LOCKED": "Забагато невдалих спроб входу. Спробуйте пізніше",
+    "SEARCH_UNAVAILABLE": "Пошук тимчасово недоступний. Спробуйте за хвилину.",
+    "SERVICE_UNAVAILABLE": "Сервіс тимчасово недоступний, спробуйте пізніше",
+    "INTERNAL": "Щось пішло не так"
   },
   "fields": {
     "TOPUP_TOO_LARGE": "Максимальне поповнення — 1 000 000 ₴",
@@ -93,7 +157,15 @@
     "RESERVE_BELOW_START": "Резервна ціна не може бути нижчою за стартову",
     "generic": "Некоректне значення",
     "MONEY_TOO_LARGE": "Сума занадто велика (максимум 100 000 000 ₴)",
-    "NOT_A_NUMBER": "Введіть суму цифрами, наприклад 1500 або 1500,50"
+    "NOT_A_NUMBER": "Введіть суму цифрами, наприклад 1500 або 1500,50",
+    "INVALID_EMAIL": "Вкажіть коректну пошту",
+    "PASSWORD_REQUIRED": "Введіть пароль",
+    "PASSWORD_TOO_SHORT": "Пароль має містити щонайменше 8 символів",
+    "PASSWORD_TOO_LONG": "Пароль занадто довгий (максимум 128)",
+    "NAME_REQUIRED": "Вкажіть ім'я (від 2 до 40 символів)",
+    "PRICE_RANGE_INVERTED": "Ціна «від» не може бути більшою за «до»",
+    "INVALID_ID": "Некоректний ідентифікатор",
+    "NOT_AN_INTEGER": "Потрібне ціле число"
   },
   "sell": {
     "title": "Новий лот",
@@ -151,5 +223,34 @@
     "remove": "Зняти лот",
     "reason": "Причина",
     "removed": "Лот знято"
+  },
+  "favorites": {
+    "title": "Обране",
+    "empty": "Ви ще нічого не додали в обране",
+    "signin": "Увійдіть, щоб побачити обране"
+  },
+  "notifications": {
+    "title": "Сповіщення",
+    "empty": "Сповіщень поки немає",
+    "markRead": "Позначити всі прочитаними",
+    "signin": "Увійдіть, щоб побачити сповіщення",
+    "kinds": {
+      "outbid": "Вашу ставку на «{title}» перебито. Поточна ціна: {price}",
+      "lot_removed": "Лот «{title}» знято модератором",
+      "topup_succeeded": "Баланс поповнено",
+      "won": "Ви виграли лот «{title}»",
+      "lot_sold": "Ваш лот «{title}» продано",
+      "lot_unsold": "Лот «{title}» завершено без продажу",
+      "lot_approved": "Лот «{title}» схвалено",
+      "lot_rejected": "Лот «{title}» відхилено",
+      "lot_paid": "Лот «{title}» оплачено",
+      "lot_shipped": "Лот «{title}» відправлено",
+      "payment_missed": "Термін оплати лота «{title}» минув",
+      "second_chance": "Лот «{title}» знову доступний вам",
+      "favorite_ending": "Лот «{title}» з обраного скоро завершиться",
+      "favorite_reminder": "Нагадування про лот «{title}»",
+      "deposit_received": "Кошти отримано",
+      "other": "Нова подія"
+    }
   }
 }
