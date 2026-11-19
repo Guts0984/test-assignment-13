@@ -57,3 +57,28 @@ jobs:
                psql -h localhost -U auction_app -d auction -c "SET session_replication_role = replica"; then
             echo "application role could disable triggers"; exit 1
           fi
+
+  e2e:
+    name: e2e (Playwright against the full docker compose stack)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Create .env (small seed so start-up is fast)
+        run: |
+          cp .env.example .env
+          sed -i 's/^SEED_USERS=.*/SEED_USERS=300/; s/^SEED_LOTS=.*/SEED_LOTS=1500/; s/^SEED_BIDS=.*/SEED_BIDS=12000/' .env
+      - name: Start the whole application
+        run: docker compose up --build -d --wait --wait-timeout 600
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @auction/web exec playwright install --with-deps chromium
+      - name: Run e2e
+        run: pnpm --filter @auction/web e2e
+      - name: Show service logs when something failed
+        if: failure()
+        run: docker compose logs --tail=60 api-a worker web nginx
