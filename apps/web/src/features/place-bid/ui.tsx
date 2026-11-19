@@ -10,8 +10,9 @@ import { amountProblem, parseMoneyInput, useMoney } from '../../shared/lib/money
 
 const form = z.object({
   kind: z.enum(['manual', 'auto']),
-  amount: z.string().refine((v) => parseMoneyInput(v) !== null && (parseMoneyInput(v) ?? 0) > 0, {
-    message: 'VALIDATION_FAILED',
+  amount: z.string().superRefine((v, ctx) => {
+    const problem = amountProblem(v, 1, 10_000_000_000);
+    if (problem) ctx.addIssue({ code: 'custom', message: problem });
   }),
 });
 type Values = z.infer<typeof form>;

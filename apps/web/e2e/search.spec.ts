@@ -1,6 +1,6 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
-const found = (page: import('@playwright/test').Page) => page.locator('section p.mb-3').first();
+const found = (page: Page) => page.locator('section p.mb-3').first();
 
 test('category filter returns only that category, survives reload, and Back steps through the filter changes', async ({
   page,

@@ -43,3 +43,24 @@ test('a bid from the keyboard only: tab to the amount, type, press Enter', async
   await expect(a.page.getByRole('status')).toContainText(/leading/i);
   await a.ctx.close();
 });
+
+test('bad bid amounts explain themselves in words, never "something went wrong"', async ({
+  browser,
+  request,
+}) => {
+  const lot = await pickLot(request);
+  const a = await signIn(browser, 'buyer4@seed.test');
+  await a.page.goto(`/en/lots/${lot.id}`);
+  for (const [typed, message] of [
+    ['abc', /Enter the amount in digits/],
+    ['0', /must be above zero/],
+    ['10.123', /at most two decimals/],
+    ['999999999999999', /too large/],
+  ] as const) {
+    await a.page.locator('#amount').fill(typed);
+    await a.page.keyboard.press('Enter');
+    await expect(a.page.locator('#amount-error')).toContainText(message);
+    await expect(a.page.locator('#amount-error')).not.toContainText(/went wrong/i);
+  }
+  await a.ctx.close();
+});

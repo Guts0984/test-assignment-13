@@ -19,13 +19,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "middleware.ts",
-    "next-env.d.ts",
-    "next.config.ts",
-    "orval.config.ts",
-    "src",
-    ".next/types/**/*.ts"
-  ],
+  "include": ["next-env.d.ts", "src", "e2e", "playwright.config.ts", "orval.config.ts", "next.config.ts", "tailwind.config.ts"],
   "exclude": ["node_modules", ".next"]
 }

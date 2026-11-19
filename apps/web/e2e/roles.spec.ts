@@ -1,6 +1,6 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
-const signIn = async (page: import('@playwright/test').Page, email: string) => {
+const signIn = async (page: Page, email: string) => {
   await page.goto('/en/login');
   await page.fill('#email', email);
   await page.fill('#password', 'Passw0rd!');

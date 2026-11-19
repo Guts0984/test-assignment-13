@@ -14,7 +14,7 @@ export const amountProblem = (raw: string, min: number, max: number): string | n
   const compact = raw.replace(/\s/g, '').replace(/,/g, '.');
   if (!/^\d+(\.\d+)?$/.test(compact)) return 'NOT_A_NUMBER';
   if (!/^\d{1,12}(\.\d{1,2})?$/.test(compact))
-    return compact.includes('.') && compact.split('.')[1]!.length > 2
+    return compact.includes('.') && (compact.split('.')[1] ?? '').length > 2
       ? 'MONEY_NOT_INTEGER_KOPECKS'
       : 'MONEY_TOO_LARGE';
   const kop = Math.round(Number(compact) * 100);
