@@ -47,7 +47,13 @@
     "buyNow": "Kup teraz",
     "pay": "Zapłać",
     "notFound": "Nie znaleziono aukcji",
-    "connection": "Na żywo"
+    "connection": "Na żywo",
+    "actions": "Akcje",
+    "payBy": "Zapłać do {date}",
+    "tracking": "Numer przesyłki",
+    "ship": "Oznacz jako wysłane",
+    "confirmReceipt": "Potwierdź odbiór",
+    "completed": "Transakcja zakończona"
   },
   "wallet": {
     "title": "Portfel",

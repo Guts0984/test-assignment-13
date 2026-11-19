@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
 import { useLiveLot } from '../../entities/lot/live';
+import { LotActions } from '../../features/lot-actions/ui';
 import { PlaceBidForm } from '../../features/place-bid/ui';
 import {
   getCatalogControllerLotQueryKey,
@@ -75,6 +76,17 @@ export const LotView = ({ id }: { id: string }) => {
           onDone={() =>
             void qc.invalidateQueries({ queryKey: getCatalogControllerLotQueryKey(id) })
           }
+        />
+      ) : null}
+      {me.data?.role === 'user' ? (
+        <LotActions
+          lotId={id}
+          status={lot.data.status}
+          buyNowPrice={lot.data.buyNowPrice}
+          isSeller={lot.data.viewer.isSeller}
+          isBuyer={lot.data.viewer.isBuyer}
+          priceToPay={lot.data.viewer.priceToPay}
+          mustPayBy={lot.data.viewer.mustPayBy}
         />
       ) : null}
       {me.data?.role === 'moderator' && (lot.data.status === 'active' || gone) ? (

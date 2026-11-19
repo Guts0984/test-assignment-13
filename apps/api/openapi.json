@@ -1571,6 +1571,9 @@
                         "isSeller": {
                           "type": "boolean"
                         },
+                        "isBuyer": {
+                          "type": "boolean"
+                        },
                         "isLeading": {
                           "type": "boolean"
                         },
@@ -1639,6 +1642,7 @@
                       },
                       "required": [
                         "isSeller",
+                        "isBuyer",
                         "isLeading",
                         "yourMax",
                         "mustPayBy",

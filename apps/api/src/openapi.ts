@@ -87,6 +87,7 @@ const lotView = z.object({
   ),
   viewer: z.object({
     isSeller: z.boolean(),
+    isBuyer: z.boolean(),
     isLeading: z.boolean(),
     yourMax: z.number().int().nullable(),
     mustPayBy: z.string().nullable(),

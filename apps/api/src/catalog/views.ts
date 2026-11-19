@@ -93,6 +93,7 @@ export const lotView = async (ctx: Ctx, lotId: string, viewerId: string | null) 
       })),
     viewer: {
       isSeller,
+      isBuyer,
       isLeading: viewerId !== null && l.leader_id === viewerId,
       yourMax: viewerId !== null && l.leader_id === viewerId ? l.leader_max : null,
       mustPayBy:

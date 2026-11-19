@@ -47,7 +47,13 @@
     "buyNow": "Buy now",
     "pay": "Pay",
     "notFound": "Lot not found",
-    "connection": "Live updates"
+    "connection": "Live updates",
+    "actions": "Actions",
+    "payBy": "Pay by {date}",
+    "tracking": "Tracking number",
+    "ship": "Mark as shipped",
+    "confirmReceipt": "Confirm receipt",
+    "completed": "Deal completed"
   },
   "wallet": {
     "title": "Wallet",

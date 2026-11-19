@@ -355,6 +355,7 @@ export type CatalogControllerLot200ViewerWinner = CatalogControllerLot200ViewerW
 
 export type CatalogControllerLot200Viewer = {
   isSeller: boolean;
+  isBuyer: boolean;
   isLeading: boolean;
   yourMax: CatalogControllerLot200ViewerYourMax;
   mustPayBy: CatalogControllerLot200ViewerMustPayBy;
