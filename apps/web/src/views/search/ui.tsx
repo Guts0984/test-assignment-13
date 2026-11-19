@@ -33,7 +33,7 @@ export const SearchView = () => {
     if (value === null || value === '') next.delete(key);
     else next.set(key, value);
     if (key !== 'page') next.delete('page');
-    router.replace(`${path}?${next.toString()}`);
+    router.push(`${path}?${next.toString()}`);
   };
   const toggleCategory = (id: string) => {
     const cur = new Set((sp.get('category') ?? '').split(',').filter(Boolean));
