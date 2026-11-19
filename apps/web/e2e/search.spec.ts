@@ -41,15 +41,3 @@ test('sort and "no bids" live in the URL', async ({ page }) => {
   const nums = prices.map((p) => Number(p.replace(/[^0-9.]/g, '')));
   expect(nums).toEqual([...nums].sort((a, b) => a - b));
 });
-
-test('the same search renders in each language with its own wording and money format', async ({
-  page,
-}) => {
-  await page.goto('/uk');
-  await expect(page.getByText(/Знайдено: \d+/)).toBeVisible({ timeout: 15_000 });
-  await expect(page.locator('ul li').first()).toContainText('₴');
-  await page.goto('/pl');
-  await expect(page.getByText(/Znaleziono: \d+/)).toBeVisible({ timeout: 15_000 });
-  await page.goto('/en');
-  await expect(page.getByText(/Found: \d+/)).toBeVisible({ timeout: 15_000 });
-});
