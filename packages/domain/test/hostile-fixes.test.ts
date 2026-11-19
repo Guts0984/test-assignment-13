@@ -151,9 +151,11 @@ describe('N2: editing a published lot sends it back to moderation', () => {
       });
       expect(Number(row.event_seq)).toBe(seqBefore + 1);
       expect(
-        await count(w.t.pool, `SELECT count(*) AS n FROM lots WHERE id = $1 AND status = 'active'`, [
-          lot,
-        ]),
+        await count(
+          w.t.pool,
+          `SELECT count(*) AS n FROM lots WHERE id = $1 AND status = 'active'`,
+          [lot],
+        ),
       ).toBe(0);
       expect(
         await count(
@@ -201,7 +203,11 @@ describe('N2: editing a published lot sends it back to moderation', () => {
     try {
       const seller = await makeUser(w.t.pool);
       const lot = await makeLot(w.t.pool, { sellerId: seller, now: w.clock.now() });
-      const r = await appendDescription(w.deps, { lotId: lot, sellerId: seller, text: 'more info' });
+      const r = await appendDescription(w.deps, {
+        lotId: lot,
+        sellerId: seller,
+        text: 'more info',
+      });
       expect(r.effects.events).toHaveLength(1);
       expect(await lotRow(w.t.pool, lot)).toMatchObject({ status: 'active' });
     } finally {

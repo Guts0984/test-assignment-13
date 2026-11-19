@@ -1,4 +1,9 @@
-import { DeleteObjectCommand, ListObjectsV2Command, NoSuchBucket, type S3Client } from '@aws-sdk/client-s3';
+import {
+  DeleteObjectCommand,
+  ListObjectsV2Command,
+  NoSuchBucket,
+  type S3Client,
+} from '@aws-sdk/client-s3';
 import type { Pool } from '@auction/db';
 
 /** A raw upload nobody will ever process is kept this long, then removed. */
