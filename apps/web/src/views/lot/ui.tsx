@@ -1,11 +1,13 @@
 'use client';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useLiveLot } from '../../entities/lot/live';
 import { PlaceBidForm } from '../../features/place-bid/ui';
 import {
   getCatalogControllerLotQueryKey,
+  moderationControllerRemove,
+  useAuthControllerMe,
   useCatalogControllerBids,
   useCatalogControllerLot,
 } from '../../shared/api/generated/client';
@@ -16,6 +18,10 @@ export const LotView = ({ id }: { id: string }) => {
   const t = useTranslations('lot');
   const money = useMoney();
   const qc = useQueryClient();
+  const me = useAuthControllerMe({ query: { retry: false } });
+  const mt = useTranslations('fin');
+  const [why, setWhy] = useState('');
+  const [gone, setGone] = useState(false);
   const lot = useCatalogControllerLot(id);
   const bids = useCatalogControllerBids(id);
   const receivedAt = useRef(Date.now());
@@ -70,6 +76,32 @@ export const LotView = ({ id }: { id: string }) => {
             void qc.invalidateQueries({ queryKey: getCatalogControllerLotQueryKey(id) })
           }
         />
+      ) : null}
+      {me.data?.role === 'moderator' && (lot.data.status === 'active' || gone) ? (
+        <section className="space-y-2 rounded border border-red-300 p-3">
+          <label htmlFor="why" className="block text-sm font-medium">
+            {mt('reason')}
+          </label>
+          <input
+            id="why"
+            value={why}
+            onChange={(e) => setWhy(e.target.value)}
+            className="w-full rounded border px-3 py-2"
+          />
+          <button
+            disabled={why.trim().length < 3}
+            onClick={() =>
+              void moderationControllerRemove(id, { reason: why }).then(() => {
+                setGone(true);
+                void qc.invalidateQueries({ queryKey: getCatalogControllerLotQueryKey(id) });
+              })
+            }
+            className="rounded bg-red-600 px-4 py-2 text-white disabled:opacity-50"
+          >
+            {mt('remove')}
+          </button>
+          {gone ? <p role="status">{mt('removed')}</p> : null}
+        </section>
       ) : null}
       <section>
         <h2 className="text-lg font-semibold">{t('history')}</h2>

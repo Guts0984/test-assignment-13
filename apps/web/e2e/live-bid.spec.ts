@@ -17,7 +17,7 @@ test('two browsers on one lot: a bid in the first updates price and bid count in
   // The second browser must be live (socket connected) before the bid is placed.
   await expect(b.page.getByText(/Live updates/)).toBeVisible();
 
-  const minimum = lot.price + 20_000; // 200 UAH above the current price is always a valid bid
+  const minimum = lot.price * 4 + 50_000; // far above any leftover autobid from earlier runs
   await a.page.locator('#amount').fill(String(minimum / 100));
   await a.page.getByRole('button', { name: 'Place bid' }).click();
   await expect(a.page.getByRole('status')).toContainText(/leading/i);
@@ -38,7 +38,7 @@ test('a bid from the keyboard only: tab to the amount, type, press Enter', async
   const a = await signIn(browser, 'buyer3@seed.test');
   await a.page.goto(`/en/lots/${lot.id}`);
   await a.page.locator('#amount').focus();
-  await a.page.keyboard.type(String((lot.price + 30_000) / 100));
+  await a.page.keyboard.type(String((lot.price * 4 + 70_000) / 100));
   await a.page.keyboard.press('Enter');
   await expect(a.page.getByRole('status')).toContainText(/leading/i);
   await a.ctx.close();

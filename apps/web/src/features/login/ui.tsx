@@ -32,7 +32,7 @@ export const LoginForm = () => {
     onSuccess: async (u) => {
       await qc.invalidateQueries({ queryKey: getAuthControllerMeQueryKey() });
       router.push(
-        `/${locale}${u.role === 'moderator' ? '/moderation' : u.role === 'user' ? '/wallet' : ''}`,
+        `/${locale}${u.role === 'moderator' ? '/moderation' : u.role === 'finance' ? '/finance' : '/wallet'}`,
       );
     },
   });

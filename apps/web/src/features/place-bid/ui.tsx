@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { tradingControllerBid } from '../../shared/api/generated/client';
 import { useErrorText } from '../../shared/lib/errors';
-import { parseMoneyInput, useMoney } from '../../shared/lib/money';
+import { amountProblem, parseMoneyInput, useMoney } from '../../shared/lib/money';
 
 const form = z.object({
   kind: z.enum(['manual', 'auto']),
@@ -28,6 +28,7 @@ export const PlaceBidForm = ({
   const t = useTranslations('lot');
   const money = useMoney();
   const errorText = useErrorText();
+  const f = useTranslations('fields');
   const { register, handleSubmit, formState } = useForm<Values>({
     resolver: zodResolver(form),
     defaultValues: { kind: 'manual', amount: '' },
@@ -70,7 +71,7 @@ export const PlaceBidForm = ({
         </p>
         <p id="amount-error" role="alert" className="text-sm text-red-600">
           {formState.errors.amount
-            ? errorText({ code: 'VALIDATION_FAILED' })
+            ? f((formState.errors.amount.message ?? 'generic') as 'generic')
             : bid.error
               ? errorText(bid.error)
               : ''}

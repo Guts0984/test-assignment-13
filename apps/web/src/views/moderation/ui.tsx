@@ -1,5 +1,6 @@
 'use client';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import {
   moderationControllerApprove,
@@ -12,6 +13,7 @@ import { useErrorText } from '../../shared/lib/errors';
 
 /** Minimal review queue: take the next lot, read it, approve or reject with a reason. */
 export const ModerationView = () => {
+  const t = useTranslations('mod');
   const me = useAuthControllerMe({ query: { retry: false } });
   const errorText = useErrorText();
   const [lotId, setLotId] = useState<string | null>(null);
@@ -36,17 +38,17 @@ export const ModerationView = () => {
   };
   const approve = useMutation({
     mutationFn: () => moderationControllerApprove(lotId as string),
-    onSuccess: () => done('Approved'),
+    onSuccess: () => done(t('approved')),
   });
   const reject = useMutation({
     mutationFn: () => moderationControllerReject(lotId as string, { reason }),
-    onSuccess: () => done('Rejected'),
+    onSuccess: () => done(t('rejected')),
   });
-  if (me.data?.role !== 'moderator') return <p className="p-4">Moderators only.</p>;
+  if (me.data?.role !== 'moderator') return <p className="p-4">{t('only')}</p>;
   const err = claim.error ?? approve.error ?? reject.error ?? lot.error;
   return (
     <div className="mx-auto max-w-2xl space-y-4 p-4">
-      <h1 className="text-2xl font-bold">Moderation</h1>
+      <h1 className="text-2xl font-bold">{t('title')}</h1>
       {lotId === null ? (
         <button onClick={() => claim.mutate()} className="rounded bg-blue-600 px-4 py-2 text-white">
           Take next lot

@@ -6,17 +6,19 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { meControllerTopup } from '../../shared/api/generated/client';
 import { useErrorText } from '../../shared/lib/errors';
-import { parseMoneyInput } from '../../shared/lib/money';
+import { amountProblem, parseMoneyInput } from '../../shared/lib/money';
 
 const form = z.object({
-  amount: z
-    .string()
-    .refine((v) => (parseMoneyInput(v) ?? 0) >= 100, { message: 'VALIDATION_FAILED' }),
+  amount: z.string().superRefine((v, ctx) => {
+    const problem = amountProblem(v, 100, 100_000_000);
+    if (problem) ctx.addIssue({ code: 'custom', message: problem });
+  }),
 });
 
 export const TopUpForm = () => {
   const t = useTranslations('wallet');
   const errorText = useErrorText();
+  const f = useTranslations('fields');
   const { register, handleSubmit, formState } = useForm<z.infer<typeof form>>({
     resolver: zodResolver(form),
     defaultValues: { amount: '' },
@@ -58,7 +60,7 @@ export const TopUpForm = () => {
       </button>
       <p role="alert" className="w-full text-sm text-red-600">
         {formState.errors.amount
-          ? errorText({ code: 'VALIDATION_FAILED' })
+          ? f((formState.errors.amount.message ?? 'generic') as 'generic')
           : topup.error
             ? errorText(topup.error)
             : ''}

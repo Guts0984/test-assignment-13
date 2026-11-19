@@ -33,7 +33,13 @@ export const Header = () => {
       </Link>
       <nav className="flex gap-4" aria-label="main">
         <Link href={`/${locale}`}>{t('search')}</Link>
-        {role === 'user' ? <Link href={`/${locale}/wallet`}>{t('wallet')}</Link> : null}
+        {role === 'user' ? (
+          <>
+            <Link href={`/${locale}/wallet`}>{t('wallet')}</Link>
+            <Link href={`/${locale}/sell`}>{t('sell')}</Link>
+          </>
+        ) : null}
+        {role === 'finance' ? <Link href={`/${locale}/finance`}>{t('finance')}</Link> : null}
         {role === 'moderator' ? (
           <Link href={`/${locale}/moderation`}>{t('moderation')}</Link>
         ) : null}

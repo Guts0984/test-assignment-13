@@ -4,7 +4,9 @@
     "wallet": "Portfel",
     "login": "Zaloguj",
     "logout": "Wyloguj",
-    "moderation": "Moderacja"
+    "moderation": "Moderacja",
+    "sell": "Sprzedaj",
+    "finance": "Finanse"
   },
   "search": {
     "title": "Aukcje",
@@ -83,6 +85,65 @@
     "MONEY_NOT_INTEGER_KOPECKS": "Podaj kwotę z najwyżej dwoma miejscami po przecinku",
     "MONEY_NOT_POSITIVE": "Kwota musi być większa od zera",
     "RESERVE_BELOW_START": "Cena minimalna nie może być niższa od ceny początkowej",
-    "generic": "Nieprawidłowa wartość"
+    "generic": "Nieprawidłowa wartość",
+    "MONEY_TOO_LARGE": "Kwota jest za duża (maksimum 100 000 000 ₴)",
+    "NOT_A_NUMBER": "Wpisz kwotę cyframi, na przykład 1500 lub 1500,50"
+  },
+  "sell": {
+    "title": "Nowa aukcja",
+    "myLots": "Moje aukcje",
+    "name": "Tytuł",
+    "description": "Opis",
+    "category": "Kategoria",
+    "city": "Miasto",
+    "condition": "Stan",
+    "startPrice": "Cena początkowa, ₴",
+    "reserve": "Cena minimalna, ₴ (ukryta)",
+    "buyNow": "Cena „Kup teraz”, ₴",
+    "days": "Czas trwania, dni",
+    "photos": "Zdjęcia (do 10, JPEG/PNG/WebP, maks. 10 MB)",
+    "create": "Utwórz aukcję",
+    "submit": "Wyślij do weryfikacji",
+    "created": "Aukcja utworzona. Dodaj zdjęcia i wyślij do weryfikacji.",
+    "submitted": "Wysłano do moderatora",
+    "empty": "Nie masz jeszcze aukcji",
+    "status": "Status",
+    "uploaded": "Zdjęcie wgrane",
+    "new": "Nowy",
+    "like_new": "Jak nowy",
+    "good": "Dobry",
+    "fair": "Dostateczny",
+    "for_parts": "Na części"
+  },
+  "mod": {
+    "title": "Moderacja",
+    "only": "Tylko dla moderatorów.",
+    "take": "Weź następną aukcję",
+    "approve": "Zatwierdź",
+    "reject": "Odrzuć",
+    "reason": "Powód odrzucenia",
+    "approved": "Zatwierdzono",
+    "rejected": "Odrzucono",
+    "empty": "Kolejka jest pusta",
+    "start": "Cena początkowa",
+    "duration": "Czas trwania, dni"
+  },
+  "fin": {
+    "title": "Finanse",
+    "from": "Od",
+    "to": "Do",
+    "turnover": "Obrót",
+    "commission": "Prowizja",
+    "paid": "Opłacone aukcje",
+    "unpaid": "Nieopłacone wygrane",
+    "byCat": "Wg kategorii",
+    "recon": "Uzgodnienie",
+    "ok": "Brak rozbieżności",
+    "bad": "Są rozbieżności",
+    "entries": "Suma zapisów",
+    "only": "Tylko dla finansów",
+    "remove": "Zdejmij aukcję",
+    "reason": "Powód",
+    "removed": "Aukcja zdjęta"
   }
 }

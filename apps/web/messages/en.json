@@ -4,7 +4,9 @@
     "wallet": "Wallet",
     "login": "Sign in",
     "logout": "Sign out",
-    "moderation": "Moderation"
+    "moderation": "Moderation",
+    "sell": "Sell",
+    "finance": "Finance"
   },
   "search": {
     "title": "Lots",
@@ -83,6 +85,65 @@
     "MONEY_NOT_INTEGER_KOPECKS": "Use an amount with at most two decimals",
     "MONEY_NOT_POSITIVE": "The amount must be above zero",
     "RESERVE_BELOW_START": "The reserve cannot be below the start price",
-    "generic": "Invalid value"
+    "generic": "Invalid value",
+    "MONEY_TOO_LARGE": "The amount is too large (maximum 100,000,000 ₴)",
+    "NOT_A_NUMBER": "Enter the amount in digits, for example 1500 or 1500.50"
+  },
+  "sell": {
+    "title": "New lot",
+    "myLots": "My lots",
+    "name": "Title",
+    "description": "Description",
+    "category": "Category",
+    "city": "City",
+    "condition": "Condition",
+    "startPrice": "Start price, ₴",
+    "reserve": "Reserve price, ₴ (hidden)",
+    "buyNow": "Buy now price, ₴",
+    "days": "Duration, days",
+    "photos": "Photos (up to 10, JPEG/PNG/WebP, max 10 MB)",
+    "create": "Create lot",
+    "submit": "Submit for review",
+    "created": "Lot created. Add photos and submit it for review.",
+    "submitted": "Sent to a moderator",
+    "empty": "You have no lots yet",
+    "status": "Status",
+    "uploaded": "Photo uploaded",
+    "new": "New",
+    "like_new": "Like new",
+    "good": "Good",
+    "fair": "Fair",
+    "for_parts": "For parts"
+  },
+  "mod": {
+    "title": "Moderation",
+    "only": "Moderators only.",
+    "take": "Take next lot",
+    "approve": "Approve",
+    "reject": "Reject",
+    "reason": "Reason (for rejection)",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "empty": "The queue is empty",
+    "start": "Start price",
+    "duration": "Duration, days"
+  },
+  "fin": {
+    "title": "Finance",
+    "from": "From",
+    "to": "To",
+    "turnover": "Turnover",
+    "commission": "Commission",
+    "paid": "Paid lots",
+    "unpaid": "Unpaid wins",
+    "byCat": "By category",
+    "recon": "Reconciliation",
+    "ok": "No discrepancies",
+    "bad": "Discrepancies found",
+    "entries": "Sum of entries",
+    "only": "Finance only",
+    "remove": "Remove lot",
+    "reason": "Reason",
+    "removed": "Lot removed"
   }
 }

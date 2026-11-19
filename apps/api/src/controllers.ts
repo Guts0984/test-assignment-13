@@ -723,10 +723,19 @@ export class FinanceController {
 
   @Get('reconciliation')
   @Roles('finance')
-  reconciliation() {
-    return reconcile(this.ctx.pool, async (id) => {
-      const p = await getPayment(this.ctx.pool, id);
-      return { status: p?.status ?? 'not_found', amount: p?.amount };
+  async reconciliation() {
+    // One query for every provider payment instead of one per top-up (the seed has 10 000 of them).
+    const rows = (
+      await this.ctx.pool.query<{
+        id: string;
+        status: 'pending' | 'succeeded' | 'failed';
+        amount: number;
+      }>('SELECT id, status, amount FROM provider.payments')
+    ).rows;
+    const byId = new Map(rows.map((r) => [r.id, r]));
+    return reconcile(this.ctx.pool, (id) => {
+      const p = byId.get(id);
+      return Promise.resolve({ status: p?.status ?? 'not_found', amount: p?.amount });
     });
   }
 }
