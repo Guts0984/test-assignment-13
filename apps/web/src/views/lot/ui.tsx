@@ -1,7 +1,7 @@
 'use client';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useLiveLot } from '../../entities/lot/live';
 import { LotActions } from '../../features/lot-actions/ui';
 import { PlaceBidForm } from '../../features/place-bid/ui';
@@ -25,14 +25,14 @@ export const LotView = ({ id }: { id: string }) => {
   const [gone, setGone] = useState(false);
   const lot = useCatalogControllerLot(id);
   const bids = useCatalogControllerBids(id);
-  const receivedAt = useRef(Date.now());
-  if (!lot.isFetching) receivedAt.current = Date.now();
+  // The moment the answer arrived (react-query records it); NOT "now", or the countdown never moves.
+  const receivedAt = lot.dataUpdatedAt;
   const { patch, connected } = useLiveLot(id, lot.data?.eventSeq);
   const price = patch?.currentPrice ?? lot.data?.currentPrice ?? 0;
   const bidCount = patch?.bidCount ?? lot.data?.bidCount ?? 0;
   const endsAt = patch?.endsAt ?? lot.data?.endsAt ?? null;
   const reserveMet = patch?.reserveMet ?? lot.data?.reserveMet ?? null;
-  const left = useServerCountdown(endsAt, lot.data?.serverNow, receivedAt.current);
+  const left = useServerCountdown(endsAt, lot.data?.serverNow, receivedAt);
   if (lot.isError)
     return (
       <p role="alert" className="p-4">

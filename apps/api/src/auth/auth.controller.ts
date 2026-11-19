@@ -17,6 +17,7 @@ import {
   parse,
   type Req,
 } from '../common/http.js';
+import { clientIp } from '../common/http.js';
 
 import { uid } from '../common/helpers.js';
 
@@ -72,43 +73,37 @@ export class AuthController {
   @Public()
   @HttpCode(200)
   @Limit({ bucket: 'login', limit: (c) => c.config.rate.login, windowMs: 60_000, by: 'ip' })
-  async login(@Body() body: unknown, @Res({ passthrough: true }) res: Response) {
+  async login(
+    @Body() body: unknown,
+    @Res({ passthrough: true }) res: Response,
+    @ReqDec() req: Req,
+  ) {
     const input = parse(loginInputSchema, body);
-    const now = this.ctx.clock.now();
+    // Attempts are counted per account AND client address with one atomic INCR (Redis, memory fallback).
+    // A stranger guessing from another address burns only their own budget, so they cannot lock the owner
+    // out, and parallel guesses cannot slip past a read-then-write race. It applies to every email alike, so
+    // it reveals nothing about which accounts exist.
+    const budget = await this.ctx.limiter.hit(
+      `loginacct:${input.email}|${clientIp(req)}`,
+      this.ctx.config.rate.loginAccount,
+      900_000,
+    );
+    if (!budget.allowed)
+      throw appError(
+        'ACCOUNT_LOCKED',
+        'too many sign-in attempts from this address, try again later',
+        { meta: { retryAfterMs: budget.retryAfterMs } },
+      );
     const { rows } = await this.ctx.pool.query<{
       id: string;
       password_hash: string;
       role: string;
       display_name: string;
-      failed_logins: number;
-      locked_until: Date | null;
-    }>(
-      'SELECT id, password_hash, role, display_name, failed_logins, locked_until FROM users WHERE email = $1',
-      [input.email],
-    );
+    }>('SELECT id, password_hash, role, display_name FROM users WHERE email = $1', [input.email]);
     const u = rows[0];
-    // Same work and same answer for "no such user" and "wrong password": no account enumeration.
+    // Same work and same answer for "no such user" and "wrong password".
     const ok = await verifyPassword(input.password, u?.password_hash ?? 'scrypt$32768$8$1$00$00');
-    if (u?.locked_until && u.locked_until > now)
-      throw appError('ACCOUNT_LOCKED', 'too many failed attempts, try again later');
-    if (!u || !ok) {
-      if (u) {
-        const failed = u.failed_logins + 1;
-        await this.ctx.pool.query<Record<string, unknown>>(
-          'UPDATE users SET failed_logins = $2, locked_until = $3 WHERE id = $1',
-          [
-            u.id,
-            failed >= 5 ? 0 : failed,
-            failed >= 5 ? new Date(now.getTime() + 15 * 60_000) : null,
-          ],
-        );
-      }
-      throw appError('INVALID_CREDENTIALS', 'wrong email or password');
-    }
-    await this.ctx.pool.query<Record<string, unknown>>(
-      'UPDATE users SET failed_logins = 0, locked_until = NULL WHERE id = $1',
-      [u.id],
-    );
+    if (!u || !ok) throw appError('INVALID_CREDENTIALS', 'wrong email or password');
     await this.startSession(u.id, res);
     return { id: u.id, email: input.email, displayName: u.display_name, role: u.role };
   }

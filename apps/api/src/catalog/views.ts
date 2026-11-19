@@ -175,7 +175,14 @@ export const lotEventsAfter = async (ctx: Ctx, lotId: string, after: number) => 
   return { serverNow: ctx.clock.now().getTime(), latestSeq: l.event_seq, events: rows };
 };
 
-export const signedPhotoUrl = (ctx: Ctx, key: string): Promise<string> =>
-  getSignedUrl(ctx.s3, new GetObjectCommand({ Bucket: ctx.config.s3.privateBucket, Key: key }), {
-    expiresIn: 300,
-  });
+export const signedPhotoUrl = async (ctx: Ctx, key: string): Promise<string> => {
+  const signed = await getSignedUrl(
+    ctx.s3,
+    new GetObjectCommand({ Bucket: ctx.config.s3.privateBucket, Key: key }),
+    { expiresIn: 300 },
+  );
+  // The signature is made for the internal host (minio:9000), which a browser cannot resolve. nginx forwards
+  // /signed/* to MinIO with that Host header, so the same signature stays valid for the browser.
+  const u = new URL(signed);
+  return `${ctx.config.publicUrl}/signed${u.pathname}${u.search}`;
+};

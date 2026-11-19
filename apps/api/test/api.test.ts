@@ -321,25 +321,146 @@ describe('authentication, sessions, CSRF', () => {
     }
   });
 
-  it('password brute force: 5 wrong guesses lock the account; the right password is refused while locked; no user enumeration', async () => {
-    const { email } = await register(app);
-    const c = client(app);
-    const wrong = () =>
-      c.call('POST', '/auth/login', { body: { email, password: 'wrong-password' } });
-    for (let i = 0; i < 5; i++) expect((await wrong()).body.error.code).toBe('INVALID_CREDENTIALS');
+  it('login guessing is limited per account AND address: the owner on another address is never locked out by a stranger', async () => {
+    const f = await newTestDb(20);
+    const strict = await startApp(
+      testApiConfig(f, {
+        rate: {
+          global: 100_000,
+          login: 100_000,
+          loginAccount: 5,
+          register: 100_000,
+          bid: 100_000,
+          topup: 100_000,
+          presign: 100_000,
+          search: 100_000,
+        },
+      }),
+      0,
+    );
+    try {
+      const { email } = await register(strict);
+      const attacker = client(strict);
+      const guess = () =>
+        attacker.call('POST', '/auth/login', {
+          body: { email, password: 'wrong-password' },
+          ip: '203.0.113.5',
+        });
+      const codes: string[] = [];
+      for (let i = 0; i < 8; i++) codes.push((await guess()).body.error.code);
+      expect(codes.slice(0, 5)).toEqual(Array(5).fill('INVALID_CREDENTIALS'));
+      expect(codes.slice(5)).toEqual(Array(3).fill('ACCOUNT_LOCKED'));
+      // The attacker's address is now blocked even with the right password...
+      expect(
+        (
+          await attacker.call('POST', '/auth/login', {
+            body: { email, password: 'Passw0rd!' },
+            ip: '203.0.113.5',
+          })
+        ).body.error.code,
+      ).toBe('ACCOUNT_LOCKED');
+      // ...but the real owner, on another address, signs in normally.
+      const owner = client(strict);
+      expect(
+        (
+          await owner.call('POST', '/auth/login', {
+            body: { email, password: 'Passw0rd!' },
+            ip: '198.51.100.20',
+          })
+        ).status,
+      ).toBe(200);
+      // Unknown emails behave identically (no enumeration): same budget, same answers.
+      const ghostEmail = `ghost-${randomUUID()}@t.test`;
+      const ghost: string[] = [];
+      for (let i = 0; i < 7; i++)
+        ghost.push(
+          (
+            await attacker.call('POST', '/auth/login', {
+              body: { email: ghostEmail, password: 'x'.repeat(10) },
+              ip: '203.0.113.5',
+            })
+          ).body.error.code,
+        );
+      expect(ghost).toEqual([
+        ...Array(5).fill('INVALID_CREDENTIALS'),
+        'ACCOUNT_LOCKED',
+        'ACCOUNT_LOCKED',
+      ]);
+    } finally {
+      await strict.close();
+      await f.close();
+    }
+  });
+
+  it('10 parallel wrong guesses cannot slip past the limit (atomic counter)', async () => {
+    const f = await newTestDb(20);
+    const strict = await startApp(
+      testApiConfig(f, {
+        rate: {
+          global: 100_000,
+          login: 100_000,
+          loginAccount: 3,
+          register: 100_000,
+          bid: 100_000,
+          topup: 100_000,
+          presign: 100_000,
+          search: 100_000,
+        },
+      }),
+      0,
+    );
+    try {
+      const { email } = await register(strict);
+      const rs = await Promise.all(
+        Array.from({ length: 10 }, () =>
+          client(strict).call('POST', '/auth/login', {
+            body: { email, password: 'wrong-password' },
+            ip: '203.0.113.9',
+          }),
+        ),
+      );
+      expect(rs.filter((r) => r.body.error.code === 'INVALID_CREDENTIALS')).toHaveLength(3);
+      expect(rs.filter((r) => r.body.error.code === 'ACCOUNT_LOCKED')).toHaveLength(7);
+    } finally {
+      await strict.close();
+      await f.close();
+    }
+  });
+
+  it('a lot with a non-existent category or city is a 400 with a code, never a 500', async () => {
+    const { c } = await register(app);
+    for (const bad of [{ categoryId: 31999 }, { cityId: 31999 }]) {
+      const r = await c.call('POST', '/lots', { body: lotInput(bad) });
+      expect(r.status).toBe(400);
+      expect(r.body.error.code).toBe('VALIDATION_FAILED');
+    }
+  });
+
+  it('photo rules: no uploads to a live lot; a rejected photo frees its slot', async () => {
+    const { c, id } = await register(app);
+    const live = await makeLot(t.pool, { sellerId: id, now: new Date() });
     expect(
-      (await c.call('POST', '/auth/login', { body: { email, password: 'Passw0rd!' } })).body.error
-        .code,
-    ).toBe('ACCOUNT_LOCKED');
-    // An unknown email gets the very same answer as a wrong password.
-    const unknown = await c.call('POST', '/auth/login', {
-      body: { email: 'nobody@t.test', password: 'wrong-password' },
+      (
+        await c.call('POST', `/lots/${live}/photos/presign`, {
+          body: { contentType: 'image/png', size: 1000 },
+        })
+      ).body.error.code,
+    ).toBe('LOT_NOT_EDITABLE');
+    const draft = await makeLot(t.pool, { sellerId: id, status: 'draft' });
+    const first = await c.call('POST', `/lots/${draft}/photos/presign`, {
+      body: { contentType: 'image/png', size: 1000 },
     });
-    expect(unknown.status).toBe(401);
-    expect(unknown.body.error).toMatchObject({
-      code: 'INVALID_CREDENTIALS',
-      message: 'wrong email or password',
-    });
+    await t.pool.query(`UPDATE lot_photos SET status = 'rejected' WHERE id = $1`, [
+      first.body.photoId,
+    ]);
+    for (let i = 0; i < 3; i++)
+      expect(
+        (
+          await c.call('POST', `/lots/${draft}/photos/presign`, {
+            body: { contentType: 'image/png', size: 1000 },
+          })
+        ).status,
+      ).toBe(201);
   });
 
   it('duplicate email is refused with its own code', async () => {
@@ -661,6 +782,7 @@ describe('abuse: one hostile address must not take everybody else down (check by
         rate: {
           global: 60,
           login: 10,
+          loginAccount: 100_000,
           register: 100_000,
           bid: 100_000,
           topup: 100_000,
@@ -703,6 +825,7 @@ describe('abuse: one hostile address must not take everybody else down (check by
         rate: {
           global: 100_000,
           login: 8,
+          loginAccount: 100_000,
           register: 100_000,
           bid: 100_000,
           topup: 100_000,
@@ -748,6 +871,7 @@ describe('abuse: one hostile address must not take everybody else down (check by
         rate: {
           global: 40,
           login: 100_000,
+          loginAccount: 100_000,
           register: 100_000,
           bid: 100_000,
           topup: 100_000,
@@ -778,6 +902,7 @@ describe('abuse: one hostile address must not take everybody else down (check by
         rate: {
           global: 25,
           login: 100_000,
+          loginAccount: 100_000,
           register: 100_000,
           bid: 100_000,
           topup: 100_000,

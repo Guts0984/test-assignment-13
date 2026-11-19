@@ -63,6 +63,13 @@ export const ModerationView = () => {
         <article className="space-y-2 rounded border p-4">
           <h2 className="text-xl font-semibold">{String(lot.data['title'])}</h2>
           <p>{String(lot.data['description'])}</p>
+          <div className="flex flex-wrap gap-2">
+            {(lot.data['photos'] as { id: string; previewUrl: string | null }[] | undefined)?.map(
+              (p) => (
+                <img key={p.id} src={p.previewUrl ?? ''} alt="" className="h-24 rounded border" />
+              ),
+            )}
+          </div>
           <p>
             Start price: {Number(lot.data['startPrice']) / 100} ₴ · duration{' '}
             {String(lot.data['durationDays'])} days

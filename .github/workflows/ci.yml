@@ -74,7 +74,7 @@ jobs:
           cp .env.example .env
           sed -i 's/^SEED_USERS=.*/SEED_USERS=300/; s/^SEED_LOTS=.*/SEED_LOTS=1500/; s/^SEED_BIDS=.*/SEED_BIDS=12000/' .env
           # e2e signs in many times from one address; keep the limiter on but with room for it
-          printf 'RATE_LOGIN_PER_MIN=500\nRATE_SEARCH_PER_MIN=5000\nRATE_GLOBAL_PER_MIN=20000\nRATE_BID_PER_10S=1000\nRATE_REGISTER_PER_HOUR=1000\n' >> .env
+          printf 'RATE_LOGIN_PER_MIN=500\nRATE_LOGIN_ACCOUNT_PER_15MIN=500\nRATE_SEARCH_PER_MIN=5000\nRATE_GLOBAL_PER_MIN=20000\nRATE_BID_PER_10S=1000\nRATE_REGISTER_PER_HOUR=1000\n' >> .env
       - name: Start the whole application
         run: docker compose up --build -d --wait --wait-timeout 600
       - run: pnpm install --frozen-lockfile

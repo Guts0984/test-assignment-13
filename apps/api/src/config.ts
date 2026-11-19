@@ -31,6 +31,7 @@ export type ApiConfig = {
   readonly rate: {
     global: number;
     login: number;
+    loginAccount: number;
     register: number;
     bid: number;
     topup: number;
@@ -62,6 +63,7 @@ const schema = z.object({
   TEST_CLOCK: envBoolean,
   RATE_GLOBAL_PER_MIN: envPositiveInt(600),
   RATE_LOGIN_PER_MIN: envPositiveInt(20),
+  RATE_LOGIN_ACCOUNT_PER_15MIN: envPositiveInt(8),
   RATE_REGISTER_PER_HOUR: envPositiveInt(20),
   RATE_BID_PER_10S: envPositiveInt(40),
   RATE_TOPUP_PER_MIN: envPositiveInt(10),
@@ -100,6 +102,7 @@ export const loadApiConfig = (
     rate: {
       global: e.RATE_GLOBAL_PER_MIN,
       login: e.RATE_LOGIN_PER_MIN,
+      loginAccount: e.RATE_LOGIN_ACCOUNT_PER_15MIN,
       register: e.RATE_REGISTER_PER_HOUR,
       bid: e.RATE_BID_PER_10S,
       topup: e.RATE_TOPUP_PER_MIN,

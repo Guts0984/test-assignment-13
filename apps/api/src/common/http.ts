@@ -229,6 +229,7 @@ export class ErrorFilter implements ExceptionFilter {
     if (e.type === 'encoding.unsupported' || e.type === 'charset.unsupported')
       return send('UNSUPPORTED_MEDIA_TYPE', 'unsupported encoding');
     if (e.code === '23505') return send('CONFLICT', 'conflicts with existing data');
+    if (e.code === '23503') return send('VALIDATION_FAILED', 'a referenced item does not exist');
     if (
       e.code === '22P02' ||
       e.code === '22003' ||

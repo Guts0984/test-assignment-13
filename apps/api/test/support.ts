@@ -37,6 +37,7 @@ export const testApiConfig = (t: TestDb, over: Partial<ApiConfig> = {}): ApiConf
   rate: {
     global: 100_000,
     login: 100_000,
+    loginAccount: 100_000,
     register: 100_000,
     bid: 100_000,
     topup: 100_000,

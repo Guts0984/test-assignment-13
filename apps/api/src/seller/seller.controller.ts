@@ -81,8 +81,12 @@ export class SellerController {
       )
     ).rows[0];
     if (lot?.seller_id !== uid(req)) throw appError('NOT_FOUND', 'lot not found');
-    if (!['draft', 'rejected', 'active'].includes(lot.status))
+    if (!['draft', 'rejected'].includes(lot.status))
       throw appError('LOT_NOT_EDITABLE', 'photos can no longer be added');
+    // A rejected photo no longer holds a slot (the unique index still counts it, so remove it).
+    await this.ctx.pool.query("DELETE FROM lot_photos WHERE lot_id = $1 AND status = 'rejected'", [
+      lotId,
+    ]);
     const photoId = randomUUID();
     // The unique (lot_id, position) index is what enforces "at most 10": a free slot or a refusal.
     let position = -1;
