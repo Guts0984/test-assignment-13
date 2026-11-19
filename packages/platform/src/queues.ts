@@ -34,7 +34,11 @@ export const createQueues = (connection: Redis): Queues => {
     removeOnComplete: true,
     removeOnFail: 1000,
   };
-  const make = (name: QueueName) => new Queue(name, { connection, defaultJobOptions: defaults });
+  const make = (name: QueueName) => {
+    const queue = new Queue(name, { connection, defaultJobOptions: defaults });
+    queue.on('error', () => undefined); // Redis hiccups are retried; an unhandled 'error' event would crash the process
+    return queue;
+  };
   return {
     lotClose: make(QUEUES.lotClose),
     paymentDeadline: make(QUEUES.paymentDeadline),

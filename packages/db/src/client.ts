@@ -15,8 +15,8 @@ pg.types.setTypeParser(pg.types.builtins.INT8, (value) => {
 
 export type PoolOptions = { max?: number; applicationName?: string };
 
-export const createPool = (url: string, options: PoolOptions = {}): Pool =>
-  new pg.Pool({
+export const createPool = (url: string, options: PoolOptions = {}): Pool => {
+  const pool = new pg.Pool({
     connectionString: url,
     max: options.max ?? 10,
     application_name: options.applicationName ?? 'auction',
@@ -24,5 +24,10 @@ export const createPool = (url: string, options: PoolOptions = {}): Pool =>
     statement_timeout: 30_000,
     idle_in_transaction_session_timeout: 30_000,
   });
+  // An idle connection can be killed (database restart, failover). That must not crash the process:
+  // the pool discards it and opens a new one on the next query.
+  pool.on('error', () => undefined);
+  return pool;
+};
 
 export const createDb = (pool: Pool): Db => drizzle(pool, { schema });

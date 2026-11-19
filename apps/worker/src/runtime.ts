@@ -128,6 +128,8 @@ export const startWorker = async (options: StartOptions): Promise<WorkerHandle> 
       connection: createRedis(config.redisUrl, `${name}:${queueName}`),
       concurrency: config.concurrency,
     });
+    // Errors such as "Missing key for job" after Redis lost its data are expected and self-healing: the scheduler re-queues.
+    w.on('error', (e) => log.warn('worker error', { queue: queueName, ...errorFields(e) }));
     w.on('failed', (job, e) =>
       log.warn('job failed', { queue: queueName, jobId: job?.id, ...errorFields(e) }),
     );
