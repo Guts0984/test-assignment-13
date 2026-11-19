@@ -1,7 +1,7 @@
 import { appError, bidStep, isPublicStatus, maskName, type LotStatus } from '@auction/shared';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import type { Ctx } from './context.js';
+import type { Ctx } from '../core/context.js';
 
 type PhotoRow = {
   id: string;

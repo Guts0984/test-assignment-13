@@ -23,7 +23,7 @@ import {
 } from '@auction/shared';
 import type { NextFunction, Request, Response } from 'express';
 import type { z } from 'zod';
-import { CTX, type Ctx } from './context.js';
+import { CTX, type Ctx } from '../core/context.js';
 
 export const SESSION_COOKIE = 'sid';
 export const CSRF_HEADER = 'x-requested-with';

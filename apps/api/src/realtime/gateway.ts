@@ -12,8 +12,8 @@ import { REALTIME_EVENTS, isPublicStatus, lotRoom, userRoom } from '@auction/sha
 import { createRedis } from '@auction/platform';
 import type { ServerOptions, Socket } from 'socket.io';
 import { z } from 'zod';
-import { CTX, type Ctx } from './context.js';
-import { SESSION_COOKIE, hashToken } from './http.js';
+import { CTX, type Ctx } from '../core/context.js';
+import { SESSION_COOKIE, hashToken } from '../common/http.js';
 
 const MAX_ROOMS = 50;
 const EVENTS_PER_10S = 60;

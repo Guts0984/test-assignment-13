@@ -10,8 +10,8 @@ import {
 } from '@auction/platform';
 import type { S3Client } from '@aws-sdk/client-s3';
 import type { Meilisearch } from 'meilisearch';
-import type { ApiConfig } from './config.js';
-import { createRateLimiter, type RateLimiter } from './ratelimit.js';
+import type { ApiConfig } from '../config.js';
+import { createRateLimiter, type RateLimiter } from '../common/ratelimit.js';
 
 export const CTX = Symbol('CTX');
 

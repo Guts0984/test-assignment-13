@@ -5,43 +5,42 @@ import type { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import type { ApiConfig } from './config.js';
-import {
-  AuthController,
-  CatalogController,
-  FinanceController,
-  MeController,
-  ModerationController,
-  ProviderController,
-  SellerController,
-  TestClockController,
-  TradingController,
-} from './controllers.js';
-import { CTX, createCtx, type Ctx } from './context.js';
-import { LiveGateway, RedisIoAdapter } from './gateway.js';
-import { ErrorFilter, SecurityGuard, requestId } from './http.js';
+import { AuthModule } from './auth/auth.module.js';
+import { CatalogModule } from './catalog/catalog.module.js';
+import { CoreModule } from './core/core.module.js';
+import { createCtx, type Ctx } from './core/context.js';
+import { FinanceModule } from './finance/finance.module.js';
+import { MeModule } from './me/me.module.js';
+import { ModerationModule } from './moderation/moderation.module.js';
+import { ProviderModule } from './provider/provider.module.js';
+import { RealtimeModule } from './realtime/realtime.module.js';
+import { RedisIoAdapter } from './realtime/gateway.js';
+import { SellerModule } from './seller/seller.module.js';
+import { TestingModule } from './testing/testing.module.js';
+import { TradingModule } from './trading/trading.module.js';
+import { ErrorFilter, SecurityGuard, requestId } from './common/http.js';
 import { setupOpenApi } from './openapi.js';
-
 @Module({})
 class AppModule {
   static register(ctx: Ctx): DynamicModule {
     return {
       module: AppModule,
-      controllers: [
-        AuthController,
-        CatalogController,
-        TradingController,
-        MeController,
-        SellerController,
-        ModerationController,
-        FinanceController,
-        ProviderController,
-        ...(ctx.config.testClock ? [TestClockController] : []),
+      imports: [
+        CoreModule.register(ctx),
+        AuthModule,
+        CatalogModule,
+        TradingModule,
+        MeModule,
+        SellerModule,
+        ModerationModule,
+        FinanceModule,
+        ProviderModule,
+        RealtimeModule,
+        ...(ctx.config.testClock ? [TestingModule] : []),
       ],
       providers: [
-        { provide: CTX, useValue: ctx },
         { provide: APP_GUARD, useClass: SecurityGuard },
         { provide: APP_FILTER, useClass: ErrorFilter },
-        LiveGateway,
       ],
     };
   }
