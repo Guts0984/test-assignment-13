@@ -10,9 +10,25 @@ concurrency:
 
 jobs:
   check:
-    name: format · lint · typecheck · unit tests
+    name: format · lint · typecheck · tests
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: auction
+          POSTGRES_PASSWORD: auction
+          POSTGRES_DB: postgres
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U auction"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 30
+    env:
+      TEST_DATABASE_URL: postgres://auction:auction@localhost:55432/postgres
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -25,3 +41,24 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
+
+  stack:
+    name: docker compose up (small seed)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create .env from the example, with a small seed to keep CI fast
+        run: |
+          cp .env.example .env
+          sed -i 's/^SEED_USERS=.*/SEED_USERS=200/; s/^SEED_LOTS=.*/SEED_LOTS=500/; s/^SEED_BIDS=.*/SEED_BIDS=4000/' .env
+      - name: db-init must succeed (migrate, app role, seed)
+        run: docker compose up --build --exit-code-from db-init --abort-on-container-exit db-init
+      - name: db-init must be safe to run again
+        run: docker compose up --exit-code-from db-init --abort-on-container-exit db-init
+      - name: The application role cannot disable triggers
+        run: |
+          if docker compose exec -T -e PGPASSWORD=dev-only-app-db-password postgres \
+               psql -h localhost -U auction_app -d auction -c "SET session_replication_role = replica"; then
+            echo "application role could disable triggers"; exit 1
+          fi

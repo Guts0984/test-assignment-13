@@ -429,3 +429,11 @@ NEXT_PUBLIC_API_URL=/api  NEXT_PUBLIC_WS_URL=/  NEXT_PUBLIC_DEFAULT_LOCALE=uk
 2. Reserve price jump: yes (decision 2).
 3. README and docs: English.
 4. 8 commits as in §6.
+
+## 10. Changes made while building (kept honest)
+
+- **Block 2:** password hashing is **scrypt** (`node:crypto`), not argon2: nothing native to compile in Docker.
+- **Block 2:** `packages/test-kit` is deferred to Block 3 (when `domain` needs shared fixtures). Until then the DB test helpers are `@auction/db/testing` (template database cloned per test file) plus `packages/db/test/helpers.ts`.
+- **Block 2:** the API and worker connect as a **restricted, non-superuser role** (`APP_DB_USER`); only `db-init` uses the owner (`DATABASE_ADMIN_URL`). Without this, a superuser could switch every trigger off, so all the DB-level guarantees would be decoration. Found by a test that polluted its own connection with `session_replication_role = replica`.
+- **Block 2:** the seed books each sale as its net effect, not every hold and release, and generates bid histories by running the real engine.
+- **Block 2:** placeholder photo rows are seeded in Postgres; the placeholder image files are uploaded to MinIO in Block 4.
