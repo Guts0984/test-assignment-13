@@ -4,6 +4,7 @@ on:
   push:
   pull_request:
 
+# One run per commit, never cancelled by a later push (the assignment asks for CI on every commit).
 concurrency:
   group: ci-${{ github.sha }}
   cancel-in-progress: false
