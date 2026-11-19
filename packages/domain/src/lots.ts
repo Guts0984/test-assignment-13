@@ -54,7 +54,8 @@ export const createLot = (deps: Deps, sellerId: string, rawInput: unknown) =>
   });
 
 /**
- * Full edit: a draft, a rejected lot (which goes back to draft), or a live lot with NO bids.
+ * Full edit: a draft, a rejected lot (which goes back to draft), or a live lot with NO bids (which
+ * goes back to `in_review`: the change must be moderated before it is public again).
  * After the first bid only `appendDescription` is possible.
  */
 export const updateLot = (deps: Deps, input: { lotId: string; sellerId: string; patch: unknown }) =>
@@ -66,19 +67,18 @@ export const updateLot = (deps: Deps, input: { lotId: string; sellerId: string; 
     if (lotEditPolicy(lot.status, lot.bid_count) !== 'full') {
       throw appError('LOT_NOT_EDITABLE', 'this lot can no longer be changed');
     }
+    // An edit of a published lot is a new listing: it goes back to moderation and leaves the
+    // public catalog/search until a moderator approves it again (approval restarts the clock).
     const live = lot.status === 'active';
-    let endsAt = lot.ends_at;
-    if (live && lot.starts_at) {
-      endsAt = new Date(lot.starts_at.getTime() + patch.durationDays * 86_400_000);
-      if (endsAt.getTime() <= now.getTime()) {
-        throw appError('LOT_NOT_EDITABLE', 'the new duration would end the lot in the past');
-      }
-    }
-    const status = lot.status === 'rejected' ? 'draft' : lot.status;
+    const status = live ? 'in_review' : lot.status === 'rejected' ? 'draft' : lot.status;
     await tx.query(
       `UPDATE lots SET title = $2, description = $3, category_id = $4, city_id = $5, condition = $6,
               start_price = $7, current_price = $7, reserve_price = $8, buy_now_price = $9, duration_days = $10,
-              ends_at = $11, status = $12, reject_reason = NULL, version = version + 1, updated_at = $13
+              starts_at = CASE WHEN $12 = 'active' THEN starts_at ELSE NULL END,
+              ends_at = CASE WHEN $12 = 'active' THEN ends_at ELSE NULL END,
+              status = $12, reject_reason = NULL,
+              event_seq = event_seq + CASE WHEN $11 THEN 1 ELSE 0 END,
+              version = version + 1, updated_at = $13
         WHERE id = $1`,
       [
         lot.id,
@@ -91,13 +91,17 @@ export const updateLot = (deps: Deps, input: { lotId: string; sellerId: string; 
         patch.reservePrice,
         patch.buyNowPrice,
         patch.durationDays,
-        endsAt,
+        live,
         status,
         now,
       ],
     );
-    await audit(tx, lot.id, input.sellerId, 'edited', now);
-    if (live) await queueLotSync(tx, lot.id, now);
+    await audit(tx, lot.id, input.sellerId, 'edited', now, live ? { backToReview: true } : {});
+    if (live) {
+      const event = await appendEvent(tx, lot, 1, 'closed', { status: 'in_review' }, now);
+      await queueLotSync(tx, lot.id, now);
+      return { result: { status }, effects: { events: [event], notifications: [] } };
+    }
     return { result: { status }, effects: NO_EFFECTS };
   });
 

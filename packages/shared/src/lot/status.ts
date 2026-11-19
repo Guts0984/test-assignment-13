@@ -35,6 +35,7 @@ export type LotAction =
   | 'revise'
   | 'approve'
   | 'reject'
+  | 'edit_live'
   | 'buy_now'
   | 'close_sold'
   | 'close_unsold'
@@ -55,6 +56,7 @@ export const LOT_TRANSITIONS: readonly LotTransition[] = [
   { from: 'rejected', to: 'draft', actor: 'seller', action: 'revise' },
   { from: 'in_review', to: 'active', actor: 'moderator', action: 'approve' },
   { from: 'in_review', to: 'rejected', actor: 'moderator', action: 'reject' },
+  { from: 'active', to: 'in_review', actor: 'seller', action: 'edit_live' },
   { from: 'active', to: 'awaiting_payment', actor: 'buyer', action: 'buy_now' },
   { from: 'active', to: 'awaiting_payment', actor: 'system', action: 'close_sold' },
   { from: 'active', to: 'ended_unsold', actor: 'system', action: 'close_unsold' },

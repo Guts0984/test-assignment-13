@@ -23,6 +23,16 @@ export type ReconciliationReport = {
   readonly ok: boolean;
 };
 
+export type ProviderFact = { status: ProviderStatus; amount?: number };
+export type FetchProvider = (paymentId: string) => Promise<ProviderFact>;
+/** Bulk lookup: ids the provider does not know may be missing from the map (= `not_found`). */
+export type FetchManyProvider = (paymentIds: string[]) => Promise<Map<string, ProviderFact>>;
+export type ReconcileOptions = {
+  readonly fetchManyProvider?: FetchManyProvider;
+  /** Ids per bulk call (default 500). */
+  readonly chunkSize?: number;
+};
+
 /**
  * Finance's reconciliation. It never changes anything; it only reports. With a provider status
  * fetcher it also lists every top-up that disagrees with the provider (the check that finds
@@ -30,7 +40,8 @@ export type ReconciliationReport = {
  */
 export const reconcile = async (
   pool: Pool,
-  fetchProvider?: (paymentId: string) => Promise<{ status: ProviderStatus; amount?: number }>,
+  fetchProvider?: FetchProvider,
+  options: ReconcileOptions = {},
 ): Promise<ReconciliationReport> => {
   const q = <T extends Record<string, unknown>>(sql: string) =>
     pool.query<T>(sql).then((r) => r.rows);
@@ -70,25 +81,40 @@ export const reconcile = async (
     )[0]?.diff ?? 0;
 
   const providerMismatches: ReconciliationReport['providerMismatches'][number][] = [];
-  if (fetchProvider) {
+  if (fetchProvider || options.fetchManyProvider) {
     const topups = await q<{
       id: string;
       status: string;
       amount: number;
       provider_payment_id: string | null;
-    }>(`SELECT id, status, amount, provider_payment_id FROM topups`);
-    for (const t of topups) {
-      if (!t.provider_payment_id) {
-        if (t.status === 'succeeded')
-          providerMismatches.push({ topupId: t.id, ours: t.status, provider: 'not_found' });
-        continue;
-      }
-      const theirs = await fetchProvider(t.provider_payment_id);
+    }>(`SELECT id, status, amount, provider_payment_id FROM topups ORDER BY id`);
+    const compare = (t: (typeof topups)[number], theirs: ProviderFact) => {
       if (theirs.status !== t.status) {
         providerMismatches.push({ topupId: t.id, ours: t.status, provider: theirs.status });
       } else if (theirs.amount !== undefined && theirs.amount !== t.amount) {
         providerMismatches.push({ topupId: t.id, ours: t.status, provider: 'amount_differs' });
       }
+    };
+    const linked: typeof topups = [];
+    for (const t of topups) {
+      if (t.provider_payment_id) linked.push(t);
+      else if (t.status === 'succeeded')
+        providerMismatches.push({ topupId: t.id, ours: t.status, provider: 'not_found' });
+    }
+    const many = options.fetchManyProvider;
+    if (many) {
+      const size = Math.max(1, options.chunkSize ?? 500);
+      for (let i = 0; i < linked.length; i += size) {
+        const chunk = linked.slice(i, i + size);
+        const facts = await many([...new Set(chunk.map((t) => t.provider_payment_id as string))]);
+        for (const t of chunk) {
+          const theirs = facts.get(t.provider_payment_id as string);
+          if (theirs) compare(t, theirs);
+          else providerMismatches.push({ topupId: t.id, ours: t.status, provider: 'not_found' });
+        }
+      }
+    } else if (fetchProvider) {
+      for (const t of linked) compare(t, await fetchProvider(t.provider_payment_id as string));
     }
   }
 

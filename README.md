@@ -241,6 +241,7 @@ a test compares the two exhaustively (10 × 10 pairs). The database refuses any 
 | `rejected` → `draft`                    | seller         | revise                              |
 | `in_review` → `active`                  | moderator      | approve                             |
 | `in_review` → `rejected`                | moderator      | reject (reason required)            |
+| `active` → `in_review`                  | seller         | edit a live lot with no bids        |
 | `active` → `awaiting_payment`           | buyer / system | buy now / close with a winner       |
 | `active` → `ended_unsold`               | system         | no bids, or reserve not met         |
 | `active` → `removed`                    | moderator      | remove (reason required)            |

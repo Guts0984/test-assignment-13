@@ -50,6 +50,13 @@ export {
   sendFavoriteReminders,
   type ReminderReport,
 } from './favorites.js';
-export { reconcile, type ReconciliationReport } from './reconcile.js';
+export {
+  reconcile,
+  type FetchManyProvider,
+  type FetchProvider,
+  type ProviderFact,
+  type ReconcileOptions,
+  type ReconciliationReport,
+} from './reconcile.js';
 export { financeReport, type FinanceReport } from './reports.js';
 export { findDueWork, runSweep, type DueWork, type SweepReport } from './sweep.js';

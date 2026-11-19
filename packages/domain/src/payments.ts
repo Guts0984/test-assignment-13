@@ -144,7 +144,7 @@ export type ExpireResult =
  * The payment (or offer) deadline passed. Idempotent and clock-driven, like closing:
  *  1. the current buyer's deposit goes to the seller (a second-chance offeree has none);
  *  2. the lot is offered to the participant with the next-highest maximum, for 24 hours, at that
- *     maximum - never to someone already offered or who already defaulted;
+ *     maximum - only if that maximum reaches the hidden reserve (if any) - never to someone already offered or who already defaulted;
  *  3. nobody left → the lot ends unsold.
  * Only one offer exists at a time (database partial unique index), and while it is open the lot
  * is `awaiting_payment` for that one user only, so nobody else can buy it.
@@ -234,9 +234,10 @@ export const expirePayment = (deps: Deps, lotId: string): Promise<Outcome<Expire
             AND user_id NOT IN (SELECT user_id FROM payment_defaults WHERE lot_id = $1)
             AND user_id NOT IN (SELECT user_id FROM second_chance_offers WHERE lot_id = $1)
           GROUP BY user_id
+         HAVING $3::bigint IS NULL OR MAX(amount) >= $3::bigint
           ORDER BY MAX(amount) DESC, MIN(id) ASC
           LIMIT 1`,
-        [lot.id, lot.seller_id],
+        [lot.id, lot.seller_id, lot.reserve_price],
       )
     ).rows[0];
 

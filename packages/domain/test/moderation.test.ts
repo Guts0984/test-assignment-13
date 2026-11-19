@@ -331,6 +331,11 @@ describe('seller editing rules (assignment: seller scenario 2)', () => {
         current_price: UAH(80),
       });
 
+      // the edit sent it back to review; a moderator approves it again before anyone can bid
+      expect(await lotRow(f.t.pool, lotId)).toMatchObject({ status: 'in_review' });
+      await claimNextLot(f.deps, mod);
+      await approveLot(f.deps, { lotId, moderatorId: mod });
+
       // first bid
       const { fund } = await import('@auction/test-kit');
       await fund(f.t.pool, bidder, UAH(1000));
