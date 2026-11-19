@@ -204,13 +204,24 @@ test.describe('notifications', () => {
     await b.ctx.close();
   });
 
-  test('notification texts follow the language', async ({ browser }) => {
+  test('notification texts follow the language', async ({ browser, request }) => {
+    // Create the notification ourselves: buyer1 bids, buyer3 outbids, so buyer1 has an "outbid" message.
+    const lot = await pickLot(request);
     const a = await signIn(browser, 'buyer1@seed.test');
+    const b = await signIn(browser, 'buyer3@seed.test');
+    const bid = (ctx: typeof a.ctx, amount: number) =>
+      ctx.request.post(`/api/lots/${lot.id}/bids`, {
+        data: { kind: 'manual', amount },
+        headers: { 'x-requested-with': 'auction-web', 'idempotency-key': crypto.randomUUID() },
+      });
+    expect((await bid(a.ctx, lot.price * 4 + 90_000)).status()).toBe(200);
+    expect((await bid(b.ctx, lot.price * 8 + 200_000)).status()).toBe(200);
     await a.page.goto('/uk/notifications');
     await expect(a.page.locator('[data-testid=notifications] li').first()).toBeVisible();
     const text = await a.page.locator('[data-testid=notifications]').innerText();
     expect(text).not.toMatch(/\b(outbid|lot_removed|topup_succeeded)\b/);
     await a.ctx.close();
+    await b.ctx.close();
   });
 });
 
