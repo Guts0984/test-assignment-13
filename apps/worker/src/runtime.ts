@@ -36,6 +36,7 @@ import { Worker, type Job } from 'bullmq';
 import type { WorkerConfig } from './config.js';
 import { errorFields, type Logger, silentLogger } from './log.js';
 import { scheduleDueWork } from './scheduler.js';
+import { cleanupStaleUploads } from './upload-cleanup.js';
 
 export type WorkerHandle = {
   readonly name: string;
@@ -169,6 +170,7 @@ export const startWorker = async (options: StartOptions): Promise<WorkerHandle> 
     await scheduleDueWork(deps, queues);
     await sweepExpiredClaims(deps);
     push((await sendFavoriteReminders(deps)).effects);
+    await cleanupStaleUploads(s3, pool, config.s3.privateBucket, now());
   };
 
   const providerStatus = async (paymentId: string): Promise<ProviderStatus> => {

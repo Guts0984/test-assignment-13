@@ -18,6 +18,7 @@
     "@auction/payment-stub": "workspace:*",
     "@auction/platform": "workspace:*",
     "@auction/shared": "workspace:*",
+    "@aws-sdk/client-s3": "^3.1171.0",
     "@nestjs/common": "^11.2.11",
     "@nestjs/core": "^11.2.11",
     "bullmq": "^5.81.5",
