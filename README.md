@@ -132,6 +132,22 @@ concurrent moderators skip each other's rows instead of waiting. A claim expires
 minutes; after that the lot is claimable again and the slow moderator's decision is refused
 (`REVIEW_CLAIM_LOST`).
 
+## Worker, Redis, search, photos, mail (`apps/worker`, `packages/platform`)
+
+| Store       | Holds                                                                                                  | If lost                                                                                                                                                                     |
+| ----------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Postgres    | everything that matters, including every deadline                                                      | n/a                                                                                                                                                                         |
+| Redis       | BullMQ jobs, socket pub/sub                                                                            | **nothing is lost.** The worker's scheduler asks Postgres what is due every second and re-queues it with a deterministic job id; handlers re-check by lock and server clock |
+| Meilisearch | read-only projection of ACTIVE lots, built from an explicit column list that never selects the reserve | the `outbox` table keeps unprocessed rows; `pnpm --filter @auction/worker reindex` rebuilds into a new index and swaps it in atomically                                     |
+| MinIO       | `photos-private` (raw uploads, processed copies), `photos-public` (copies of approved lots only)       | photo rows are in Postgres; the pipeline is re-runnable                                                                                                                     |
+
+- **Search sync:** the domain writes an `outbox` row in the same transaction as every lot change. Workers claim rows with `FOR UPDATE SKIP LOCKED`, sync from the CURRENT row (so duplicates and reordering converge) and mark them done only after Meilisearch accepted the change. Meilisearch down → rows wait, search answers `503 SEARCH_UNAVAILABLE`, bidding and the lot page keep working.
+- **Photos:** the browser POSTs straight to MinIO with a presigned policy that pins this key, this Content-Type and exactly this size, so MinIO itself refuses anything else. The worker sniffs the real format, rejects decompression bombs, decodes and **re-encodes** (EXIF, GPS, XMP and trailing payloads do not survive), applies orientation, makes a 400 px WebP preview and deletes the raw upload. Public copies exist only while the lot is public.
+- **Email:** `email_log` has a unique `dedupe_key`; rows are sent under `FOR UPDATE SKIP LOCKED`, so any number of workers send each at most once. The only duplicate window is a crash between SMTP "250 OK" and the status update.
+- **Payment stub** (`packages/payment-stub`): HMAC-SHA256 over `timestamp.body`, 5-minute replay window, constant-time compare; chaos mode makes webhooks duplicate, late, contradicting (`failed` after `succeeded`) or lost. A receiver must re-fetch the authoritative status; the worker's reconciler finds lost ones every minute.
+- Run several workers with `docker compose up --scale worker=3`.
+- MinIO: the official `minio/minio` image is no longer on Docker Hub, so compose uses the community build `pgsty/minio` (override with `MINIO_IMAGE`).
+
 ## Database (`packages/db`)
 
 PostgreSQL is the only source of truth. Rules that must never be broken live in the database as

@@ -1,0 +1,37 @@
+{
+  "name": "@auction/worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint --max-warnings 0 .",
+    "test": "vitest run",
+    "start": "node dist/main.js",
+    "init": "node dist/cli.js init",
+    "reindex": "node dist/cli.js reindex"
+  },
+  "dependencies": {
+    "@auction/db": "workspace:*",
+    "@auction/domain": "workspace:*",
+    "@auction/payment-stub": "workspace:*",
+    "@auction/platform": "workspace:*",
+    "@auction/shared": "workspace:*",
+    "@nestjs/common": "^11.2.11",
+    "@nestjs/core": "^11.2.11",
+    "bullmq": "^5.81.5",
+    "meilisearch": "~0.63.0",
+    "pg": "^8.23.1",
+    "reflect-metadata": "~0.2.2",
+    "rxjs": "^7.8.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@auction/test-kit": "workspace:*",
+    "@types/node": "^24.19.2",
+    "@types/pg": "^8.23.1",
+    "sharp": "^0.35.5",
+    "vitest": "^5.1.1"
+  }
+}

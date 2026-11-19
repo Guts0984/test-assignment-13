@@ -738,6 +738,15 @@ export const generateSeed = (cfg: SeedConfig): SeedData => {
   // ---- photos (placeholder objects are uploaded to MinIO by the worker at start-up) ------------
   const photos: Row[] = [];
   let photoCounter = 0;
+  // Photos of lots the public can see are already published; the rest stay private.
+  const PUBLIC = new Set<LotStatus>([
+    'active',
+    'ended_unsold',
+    'awaiting_payment',
+    'paid',
+    'shipped',
+    'completed',
+  ]);
   for (const plan of plans) {
     const n = rng.int(1, 4);
     for (let pos = 0; pos < n; pos++) {
@@ -751,6 +760,7 @@ export const generateSeed = (cfg: SeedConfig): SeedData => {
         content_type: 'image/jpeg',
         size_bytes: 24_000,
         status: 'ready',
+        published_at: PUBLIC.has(plan.status) ? iso(now) : null,
       });
     }
   }

@@ -44,6 +44,12 @@ export {
   sweepExpiredClaims,
 } from './moderation.js';
 export * from './wallet.js';
+export {
+  addFavorite,
+  removeFavorite,
+  sendFavoriteReminders,
+  type ReminderReport,
+} from './favorites.js';
 export { reconcile, type ReconciliationReport } from './reconcile.js';
 export { financeReport, type FinanceReport } from './reports.js';
 export { findDueWork, runSweep, type DueWork, type SweepReport } from './sweep.js';

@@ -441,3 +441,5 @@ NEXT_PUBLIC_API_URL=/api  NEXT_PUBLIC_WS_URL=/  NEXT_PUBLIC_DEFAULT_LOCALE=uk
 - **Block 3:** the use cases return `{ result, effects }`; effects (socket events, notifications) are also persisted in the same transaction, so a lost push is recovered from Postgres.
 - **Block 3:** the sweeper (`runSweep`) is the real timer; BullMQ jobs in Block 4 only make it faster.
 - **Block 3:** the test suite was mutation-checked by hand: deliberately removing the deposit release, the clock check and the forfeit each makes tests fail.
+- **Block 4:** two extra packages, `payment-stub` (the provider as its own module) and `platform` (Redis/BullMQ, S3, photo pipeline, Meilisearch, mail, realtime emitter), so `api` and `worker` share tested code. The worker is a thin NestJS shell around a functional `startWorker`.
+- **Block 4:** Meilisearch v1.22 (the atomic index swap needs it); MinIO is the `pgsty/minio` community build.

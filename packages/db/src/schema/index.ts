@@ -153,6 +153,7 @@ export const lotPhotos = pgTable(
       .notNull()
       .default('pending'),
     createdAt: at('created_at').notNull().defaultNow(),
+    publishedAt: at('published_at'),
   },
   (t) => [uniqueIndex('lot_photos_position_key').on(t.lotId, t.position)],
 );
@@ -386,4 +387,18 @@ export const providerPayments = providerSchema.table('payments', {
     .default('pending'),
   createdAt: at('created_at').notNull().defaultNow(),
   updatedAt: at('updated_at').notNull().defaultNow(),
+  notifyUrl: text('notify_url'),
+});
+
+export const providerWebhookEvents = providerSchema.table('webhook_events', {
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
+  paymentId: uuid('payment_id')
+    .notNull()
+    .references(() => providerPayments.id),
+  event: text('event', { enum: ['payment.succeeded', 'payment.failed'] }).notNull(),
+  deliverAt: at('deliver_at').notNull(),
+  deliveredAt: at('delivered_at'),
+  attempts: integer('attempts').notNull().default(0),
+  lastError: text('last_error'),
+  createdAt: at('created_at').notNull().defaultNow(),
 });

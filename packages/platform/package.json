@@ -1,0 +1,43 @@
+{
+  "name": "@auction/platform",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint --max-warnings 0 .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@auction/db": "workspace:*",
+    "@auction/domain": "workspace:*",
+    "@auction/payment-stub": "workspace:*",
+    "@auction/shared": "workspace:*",
+    "@aws-sdk/client-s3": "^3.1171.0",
+    "@aws-sdk/s3-presigned-post": "^3.1171.0",
+    "@aws-sdk/s3-request-presigner": "^3.1171.0",
+    "@socket.io/redis-emitter": "^5.1.0",
+    "bullmq": "^5.81.5",
+    "ioredis": "^5.11.1",
+    "meilisearch": "~0.63.0",
+    "nodemailer": "^10.6.0",
+    "pg": "^8.23.1",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@auction/test-kit": "workspace:*",
+    "@types/nodemailer": "^8.0.2",
+    "@types/pg": "^8.23.1",
+    "vitest": "^5.1.1"
+  }
+}
