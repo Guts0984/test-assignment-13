@@ -115,6 +115,8 @@ export class AuthController {
     await this.ctx.pool.query<Record<string, unknown>>('DELETE FROM sessions WHERE id = $1', [
       req.user?.sessionId,
     ]);
+    // Sockets opened with this session must not keep receiving private notifications after logout.
+    if (req.user?.sessionId) this.ctx.emitter.disconnectSession(req.user.sessionId);
     res.clearCookie(SESSION_COOKIE, { path: '/' });
   }
 

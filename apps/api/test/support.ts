@@ -29,6 +29,7 @@ export const testApiConfig = (t: TestDb, over: Partial<ApiConfig> = {}): ApiConf
   publicPhotoUrl: `${PUBLIC}/photos`,
   webhookSecret: WEBHOOK_SECRET,
   providerApiKey: PROVIDER_KEY,
+  providerBaseUrl: 'http://nginx:8080',
   chaos: false,
   timings: { ...DEFAULT_TIMINGS },
   trustProxy: 'loopback',

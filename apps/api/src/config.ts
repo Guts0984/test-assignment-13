@@ -23,6 +23,8 @@ export type ApiConfig = {
   readonly publicPhotoUrl: string;
   readonly webhookSecret: string;
   readonly providerApiKey: string;
+  /** Where the payment provider reaches this system (webhook target), e.g. the nginx front. */
+  readonly providerBaseUrl: string;
   readonly chaos: boolean;
   readonly timings: Timings;
   readonly trustProxy: string;
@@ -57,6 +59,7 @@ const schema = z.object({
   PUBLIC_PHOTO_URL: z.url().optional(),
   PAYMENT_WEBHOOK_SECRET: secretSchema,
   PAYMENT_PROVIDER_API_KEY: secretSchema,
+  PROVIDER_BASE_URL: z.url().default('http://nginx:8080'),
   PAYMENT_STUB_CHAOS: envBoolean,
   TRUSTED_PROXY: z.string().default('loopback, linklocal, uniquelocal'),
   COOKIE_SECURE: envBoolean,
@@ -94,6 +97,7 @@ export const loadApiConfig = (
     publicPhotoUrl: e.PUBLIC_PHOTO_URL ?? `${e.PUBLIC_URL}/photos`,
     webhookSecret: e.PAYMENT_WEBHOOK_SECRET,
     providerApiKey: e.PAYMENT_PROVIDER_API_KEY,
+    providerBaseUrl: e.PROVIDER_BASE_URL.replace(/\/+$/, ''),
     chaos: e.PAYMENT_STUB_CHAOS,
     timings: timingsFromEnv(e),
     trustProxy: e.TRUSTED_PROXY,

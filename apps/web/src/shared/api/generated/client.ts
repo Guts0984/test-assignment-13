@@ -678,9 +678,49 @@ export type MeControllerTopup201 = {
   payUrl: string;
 };
 
-export type MeControllerBids200Item = { [key: string]: unknown };
+export type MeControllerBids200Item = {
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  id: number;
+  lotId: string;
+  title: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  amount: number;
+  isAuto: boolean;
+  at: string;
+  status: string;
+  leading: boolean;
+};
 
-export type MeControllerLots200ItemsItem = { [key: string]: unknown };
+export type MeControllerLots200ItemsItemEndsAt = string | null;
+
+export type MeControllerLots200ItemsItemFinalPrice = number | null;
+
+export type MeControllerLots200ItemsItemReservePrice = number | null;
+
+export type MeControllerLots200ItemsItem = {
+  id: string;
+  title: string;
+  status: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  currentPrice: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  bidCount: number;
+  endsAt: MeControllerLots200ItemsItemEndsAt;
+  finalPrice: MeControllerLots200ItemsItemFinalPrice;
+  reservePrice: MeControllerLots200ItemsItemReservePrice;
+};
 
 export type MeControllerLots200 = {
   items: MeControllerLots200ItemsItem[];
@@ -691,11 +731,45 @@ export type MeControllerLots200 = {
   pendingPayout: number;
 };
 
-export type MeControllerWins200Item = { [key: string]: unknown };
+export type MeControllerWins200ItemPrice = number | null;
 
-export type MeControllerFavorites200Item = { [key: string]: unknown };
+export type MeControllerWins200ItemPayBy = string | null;
 
-export type MeControllerNotifications200Item = { [key: string]: unknown };
+export type MeControllerWins200Item = {
+  id: string;
+  title: string;
+  status: string;
+  price: MeControllerWins200ItemPrice;
+  payBy: MeControllerWins200ItemPayBy;
+};
+
+export type MeControllerFavorites200ItemEndsAt = string | null;
+
+export type MeControllerFavorites200Item = {
+  id: string;
+  title: string;
+  status: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  currentPrice: number;
+  endsAt: MeControllerFavorites200ItemEndsAt;
+};
+
+export type MeControllerNotifications200ItemPayload = { [key: string]: unknown };
+
+export type MeControllerNotifications200Item = {
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  id: number;
+  kind: string;
+  payload: MeControllerNotifications200ItemPayload;
+  at: string;
+  read: boolean;
+};
 
 export type SellerControllerCreateBodyCondition =
   (typeof SellerControllerCreateBodyCondition)[keyof typeof SellerControllerCreateBodyCondition];
@@ -811,7 +885,45 @@ export type ModerationControllerClaim200 = {
   expiresAt: string;
 };
 
-export type ModerationControllerLot200 = { [key: string]: unknown };
+export type ModerationControllerLot200BuyNowPrice = number | null;
+
+export type ModerationControllerLot200PhotosItemPreviewUrl = string | null;
+
+export type ModerationControllerLot200PhotosItem = {
+  id: string;
+  url: string;
+  previewUrl: ModerationControllerLot200PhotosItemPreviewUrl;
+};
+
+export type ModerationControllerLot200 = {
+  id: string;
+  title: string;
+  description: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  categoryId: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  cityId: number;
+  condition: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  startPrice: number;
+  buyNowPrice: ModerationControllerLot200BuyNowPrice;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  durationDays: number;
+  claimExpiresAt: string;
+  photos: ModerationControllerLot200PhotosItem[];
+};
 
 export type ModerationControllerApprove200 = {
   endsAt: string;
@@ -850,9 +962,130 @@ export type FinanceControllerReportParams = {
   to?: string;
 };
 
-export type FinanceControllerReport200 = { [key: string]: unknown };
+export type FinanceControllerReport200ByCategoryItem = {
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  categoryId: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  lots: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  turnover: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  commission: number;
+};
 
-export type FinanceControllerReconciliation200 = { [key: string]: unknown };
+export type FinanceControllerReport200 = {
+  from: string;
+  to: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  turnover: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  commission: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  paidLots: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  winsOffered: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  unpaidWins: number;
+  unpaidShare: number;
+  byCategory: FinanceControllerReport200ByCategoryItem[];
+};
+
+export type FinanceControllerReconciliation200BalanceMismatchesItem = {
+  account: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  balance: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  entriesSum: number;
+};
+
+export type FinanceControllerReconciliation200HeldMismatchesItem = {
+  userId: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  held: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  deposits: number;
+};
+
+export type FinanceControllerReconciliation200ProviderMismatchesItemProvider =
+  (typeof FinanceControllerReconciliation200ProviderMismatchesItemProvider)[keyof typeof FinanceControllerReconciliation200ProviderMismatchesItemProvider];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const FinanceControllerReconciliation200ProviderMismatchesItemProvider = {
+  pending: 'pending',
+  succeeded: 'succeeded',
+  failed: 'failed',
+  not_found: 'not_found',
+  amount_differs: 'amount_differs',
+} as const;
+
+export type FinanceControllerReconciliation200ProviderMismatchesItem = {
+  topupId: string;
+  ours: string;
+  provider: FinanceControllerReconciliation200ProviderMismatchesItemProvider;
+};
+
+export type FinanceControllerReconciliation200 = {
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  entriesSum: number;
+  unbalancedTransactions: string[];
+  balanceMismatches: FinanceControllerReconciliation200BalanceMismatchesItem[];
+  negativeBalances: string[];
+  heldMismatches: FinanceControllerReconciliation200HeldMismatchesItem[];
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  escrowDiff: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  commissionDiff: number;
+  providerMismatches: FinanceControllerReconciliation200ProviderMismatchesItem[];
+  ok: boolean;
+};
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 

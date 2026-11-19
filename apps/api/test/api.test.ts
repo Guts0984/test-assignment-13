@@ -1038,3 +1038,40 @@ describe('server clock and test-only routes', () => {
 
 void errorResponseSchema;
 void lotRow;
+
+describe('sockets after logout', () => {
+  it('logout disconnects the sockets of that session only and no private event reaches them afterwards', async () => {
+    const a = await register(app, 'logoutA');
+    const other = client(app);
+    const login = await other.call('POST', '/auth/login', {
+      body: { email: a.email, password: 'Passw0rd!' },
+    });
+    expect(login.status).toBe(200);
+    const [s1, s2, sOther] = [
+      socket(app, a.c.cookie),
+      socket(app, a.c.cookie),
+      socket(app, other.cookie),
+    ];
+    await Promise.all([s1, s2, sOther].map(waitConnected));
+    await new Promise((r) => setTimeout(r, 400)); // the server authenticates the handshake asynchronously
+    const got1 = collect(s1, 'notification');
+    const closed = Promise.all(
+      [s1, s2].map((s) => new Promise<string>((res) => s.on('disconnect', res))),
+    );
+    try {
+      expect((await a.c.call('POST', '/auth/logout')).status).toBe(204);
+      const outcome = await Promise.race([
+        closed,
+        new Promise((r) => setTimeout(() => r('still connected'), 3000)),
+      ]);
+      expect(outcome).not.toBe('still connected');
+      expect(s1.connected || s2.connected).toBe(false);
+      expect(sOther.connected).toBe(true); // a different session of the same user stays
+      await other.call('POST', '/me/topups', { body: { amount: 1000 }, idem: idem() });
+      await new Promise((r) => setTimeout(r, 400));
+      expect(got1).toEqual([]);
+    } finally {
+      [s1, s2, sOther].forEach((s) => s.close());
+    }
+  });
+});

@@ -9,7 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { REALTIME_EVENTS, isPublicStatus, lotRoom, userRoom } from '@auction/shared';
-import { createRedis } from '@auction/platform';
+import { createRedis, sessionRoom } from '@auction/platform';
 import type { ServerOptions, Socket } from 'socket.io';
 import { z } from 'zod';
 import { CTX, type Ctx } from '../core/context.js';
@@ -59,12 +59,22 @@ export class LiveGateway implements OnGatewayConnection {
     try {
       const token = cookieOf(socket.handshake.headers.cookie, SESSION_COOKIE);
       if (token && token.length >= 20 && token.length <= 100) {
-        const { rows } = await this.ctx.pool.query<{ id: string }>(
-          `SELECT u.id FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = $1 AND s.expires_at > $2`,
+        const { rows } = await this.ctx.pool.query<{ id: string; sid: string }>(
+          `SELECT u.id, s.id AS sid FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = $1 AND s.expires_at > $2`,
           [hashToken(token), this.ctx.clock.now()],
         );
-        const id = rows[0]?.id;
-        if (id) await socket.join(userRoom(id));
+        const row = rows[0];
+        if (row) {
+          await socket.join([userRoom(row.id), sessionRoom(row.sid)]);
+          // A logout that landed between the lookup and the join broadcast its disconnect to an empty room.
+          const still = await this.ctx.pool.query('SELECT 1 FROM sessions WHERE id = $1', [
+            row.sid,
+          ]);
+          if (still.rowCount === 0) {
+            socket.disconnect(true);
+            return;
+          }
+        }
       }
     } catch {
       socket.disconnect(true);

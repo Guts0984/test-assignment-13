@@ -3635,10 +3635,47 @@
                   "type": "array",
                   "items": {
                     "type": "object",
-                    "propertyNames": {
-                      "type": "string"
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "lotId": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "amount": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "isAuto": {
+                        "type": "boolean"
+                      },
+                      "at": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "leading": {
+                        "type": "boolean"
+                      }
                     },
-                    "additionalProperties": {}
+                    "required": [
+                      "id",
+                      "lotId",
+                      "title",
+                      "amount",
+                      "isAuto",
+                      "at",
+                      "status",
+                      "leading"
+                    ],
+                    "additionalProperties": false
                   }
                 }
               }
@@ -3755,10 +3792,65 @@
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "propertyNames": {
-                          "type": "string"
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "currentPrice": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "bidCount": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "endsAt": {
+                            "type": ["string", "null"]
+                          },
+                          "finalPrice": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "reservePrice": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
                         },
-                        "additionalProperties": {}
+                        "required": [
+                          "id",
+                          "title",
+                          "status",
+                          "currentPrice",
+                          "bidCount",
+                          "endsAt",
+                          "finalPrice",
+                          "reservePrice"
+                        ],
+                        "additionalProperties": false
                       }
                     },
                     "pendingPayout": {
@@ -3881,10 +3973,34 @@
                   "type": "array",
                   "items": {
                     "type": "object",
-                    "propertyNames": {
-                      "type": "string"
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "price": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "payBy": {
+                        "type": ["string", "null"]
+                      }
                     },
-                    "additionalProperties": {}
+                    "required": ["id", "title", "status", "price", "payBy"],
+                    "additionalProperties": false
                   }
                 }
               }
@@ -3998,10 +4114,27 @@
                   "type": "array",
                   "items": {
                     "type": "object",
-                    "propertyNames": {
-                      "type": "string"
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "currentPrice": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "endsAt": {
+                        "type": ["string", "null"]
+                      }
                     },
-                    "additionalProperties": {}
+                    "required": ["id", "title", "status", "currentPrice", "endsAt"],
+                    "additionalProperties": false
                   }
                 }
               }
@@ -4115,10 +4248,31 @@
                   "type": "array",
                   "items": {
                     "type": "object",
-                    "propertyNames": {
-                      "type": "string"
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "kind": {
+                        "type": "string"
+                      },
+                      "payload": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      },
+                      "at": {
+                        "type": "string"
+                      },
+                      "read": {
+                        "type": "boolean"
+                      }
                     },
-                    "additionalProperties": {}
+                    "required": ["id", "kind", "payload", "at", "read"],
+                    "additionalProperties": false
                   }
                 }
               }
@@ -5097,10 +5251,88 @@
                 "schema": {
                   "$schema": "https://json-schema.org/draft/2020-12/schema",
                   "type": "object",
-                  "propertyNames": {
-                    "type": "string"
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "categoryId": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "cityId": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "condition": {
+                      "type": "string"
+                    },
+                    "startPrice": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "buyNowPrice": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "durationDays": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "claimExpiresAt": {
+                      "type": "string"
+                    },
+                    "photos": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "previewUrl": {
+                            "type": ["string", "null"]
+                          }
+                        },
+                        "required": ["id", "url", "previewUrl"],
+                        "additionalProperties": false
+                      }
+                    }
                   },
-                  "additionalProperties": {}
+                  "required": [
+                    "id",
+                    "title",
+                    "description",
+                    "categoryId",
+                    "cityId",
+                    "condition",
+                    "startPrice",
+                    "buyNowPrice",
+                    "durationDays",
+                    "claimExpiresAt",
+                    "photos"
+                  ],
+                  "additionalProperties": false
                 }
               }
             }
@@ -5648,10 +5880,84 @@
                 "schema": {
                   "$schema": "https://json-schema.org/draft/2020-12/schema",
                   "type": "object",
-                  "propertyNames": {
-                    "type": "string"
+                  "properties": {
+                    "from": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "string"
+                    },
+                    "turnover": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "commission": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "paidLots": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "winsOffered": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "unpaidWins": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "unpaidShare": {
+                      "type": "number"
+                    },
+                    "byCategory": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "categoryId": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "lots": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "turnover": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "commission": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": ["categoryId", "lots", "turnover", "commission"],
+                        "additionalProperties": false
+                      }
+                    }
                   },
-                  "additionalProperties": {}
+                  "required": [
+                    "from",
+                    "to",
+                    "turnover",
+                    "commission",
+                    "paidLots",
+                    "winsOffered",
+                    "unpaidWins",
+                    "unpaidShare",
+                    "byCategory"
+                  ],
+                  "additionalProperties": false
                 }
               }
             }
@@ -5762,10 +6068,122 @@
                 "schema": {
                   "$schema": "https://json-schema.org/draft/2020-12/schema",
                   "type": "object",
-                  "propertyNames": {
-                    "type": "string"
+                  "properties": {
+                    "entriesSum": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "unbalancedTransactions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "balanceMismatches": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "type": "string"
+                          },
+                          "balance": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "entriesSum": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": ["account", "balance", "entriesSum"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "negativeBalances": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "heldMismatches": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "userId": {
+                            "type": "string"
+                          },
+                          "held": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "deposits": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": ["userId", "held", "deposits"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "escrowDiff": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "commissionDiff": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "providerMismatches": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "topupId": {
+                            "type": "string"
+                          },
+                          "ours": {
+                            "type": "string"
+                          },
+                          "provider": {
+                            "type": "string",
+                            "enum": [
+                              "pending",
+                              "succeeded",
+                              "failed",
+                              "not_found",
+                              "amount_differs"
+                            ]
+                          }
+                        },
+                        "required": ["topupId", "ours", "provider"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "ok": {
+                      "type": "boolean"
+                    }
                   },
-                  "additionalProperties": {}
+                  "required": [
+                    "entriesSum",
+                    "unbalancedTransactions",
+                    "balanceMismatches",
+                    "negativeBalances",
+                    "heldMismatches",
+                    "escrowDiff",
+                    "commissionDiff",
+                    "providerMismatches",
+                    "ok"
+                  ],
+                  "additionalProperties": false
                 }
               }
             }

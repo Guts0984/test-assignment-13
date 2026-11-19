@@ -37,7 +37,7 @@ export class MeController {
     const payment = await createPayment(this.ctx.pool, {
       amount,
       reference: t.topupId,
-      notifyUrl: `${process.env['PROVIDER_BASE_URL'] ?? 'http://nginx:8080'}/webhooks/payments`,
+      notifyUrl: `${this.ctx.config.providerBaseUrl}/webhooks/payments`,
       now: this.ctx.clock.now(),
     });
     await attachProviderPayment(this.ctx.pool, t.topupId, payment.id);

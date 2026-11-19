@@ -15,6 +15,16 @@ import {
   shipInputSchema,
   topUpInputSchema,
 } from '@auction/shared';
+import {
+  financeReportSchema,
+  moderationLotSchema,
+  myBidsSchema,
+  myFavoritesSchema,
+  myLotsSchema,
+  myNotificationsSchema,
+  myWinsSchema,
+  reconciliationSchema,
+} from './common/responses.js';
 
 /**
  * The OpenAPI document is generated from the code (routes) plus the Zod schemas that actually validate the
@@ -183,8 +193,6 @@ const presign = z.object({
     expiresInSeconds: z.number().int(),
   }),
 });
-const rows = z.array(z.record(z.string(), z.unknown()));
-const any = z.record(z.string(), z.unknown());
 
 type Doc = { body?: z.ZodType; query?: z.ZodObject; ok?: z.ZodType; status?: string };
 const DOCS: Record<string, Doc> = {
@@ -213,11 +221,11 @@ const DOCS: Record<string, Doc> = {
   },
   'GET /me/wallet': { ok: wallet },
   'POST /me/topups': { body: topUpInputSchema, ok: topup, status: '201' },
-  'GET /me/bids': { ok: rows },
-  'GET /me/lots': { ok: z.object({ items: rows, pendingPayout: z.number().int() }) },
-  'GET /me/wins': { ok: rows },
-  'GET /me/favorites': { ok: rows },
-  'GET /me/notifications': { ok: rows },
+  'GET /me/bids': { ok: myBidsSchema },
+  'GET /me/lots': { ok: myLotsSchema },
+  'GET /me/wins': { ok: myWinsSchema },
+  'GET /me/favorites': { ok: myFavoritesSchema },
+  'GET /me/notifications': { ok: myNotificationsSchema },
   'POST /lots': { body: lotCreateInputSchema, ok: z.object({ lotId: z.string() }), status: '201' },
   'PUT /lots/{id}': { body: lotUpdateInputSchema, ok: z.object({ status: z.string() }) },
   'POST /lots/{id}/description': {
@@ -226,7 +234,7 @@ const DOCS: Record<string, Doc> = {
   },
   'POST /lots/{id}/photos/presign': { body: photoPresignInputSchema, ok: presign, status: '201' },
   'POST /moderation/claim': { ok: z.object({ lotId: z.string(), expiresAt: z.string() }) },
-  'GET /moderation/lots/{id}': { ok: any },
+  'GET /moderation/lots/{id}': { ok: moderationLotSchema },
   'POST /moderation/lots/{id}/reject': {
     body: lotRejectInputSchema,
     ok: z.object({ status: z.string() }),
@@ -236,8 +244,11 @@ const DOCS: Record<string, Doc> = {
     ok: z.object({ released: z.number().int() }),
   },
   'POST /moderation/lots/{id}/approve': { ok: z.object({ endsAt: z.string() }) },
-  'GET /finance/report': { query: z.object({ from: z.string(), to: z.string() }), ok: any },
-  'GET /finance/reconciliation': { ok: any },
+  'GET /finance/report': {
+    query: z.object({ from: z.string(), to: z.string() }),
+    ok: financeReportSchema,
+  },
+  'GET /finance/reconciliation': { ok: reconciliationSchema },
 };
 
 export const buildOpenApi = (app: INestApplication): OpenAPIObject => {

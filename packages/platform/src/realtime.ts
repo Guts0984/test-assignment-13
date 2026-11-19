@@ -17,11 +17,23 @@ import type { Redis } from 'ioredis';
  */
 export type RealtimeEmitter = {
   readonly emit: (effects: Effects, serverNow: number) => void;
+  /** Disconnects every socket (on every api copy) that authenticated with this session. Best effort. */
+  readonly disconnectSession: (sessionId: string) => void;
 };
+
+/** Every socket joins the room of the session it authenticated with, so logout can drop exactly those. */
+export const sessionRoom = (sessionId: string): string => `session:${sessionId}`;
 
 export const createRealtimeEmitter = (redis: Redis): RealtimeEmitter => {
   const emitter = new Emitter(redis);
   return {
+    disconnectSession: (sessionId) => {
+      try {
+        emitter.in(sessionRoom(sessionId)).disconnectSockets(true);
+      } catch {
+        // Best effort, like emit.
+      }
+    },
     emit: (effects, serverNow) => {
       try {
         for (const e of effects.events) {
