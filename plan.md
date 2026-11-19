@@ -437,3 +437,7 @@ NEXT_PUBLIC_API_URL=/api  NEXT_PUBLIC_WS_URL=/  NEXT_PUBLIC_DEFAULT_LOCALE=uk
 - **Block 2:** the API and worker connect as a **restricted, non-superuser role** (`APP_DB_USER`); only `db-init` uses the owner (`DATABASE_ADMIN_URL`). Without this, a superuser could switch every trigger off, so all the DB-level guarantees would be decoration. Found by a test that polluted its own connection with `session_replication_role = replica`.
 - **Block 2:** the seed books each sale as its net effect, not every hold and release, and generates bid histories by running the real engine.
 - **Block 2:** placeholder photo rows are seeded in Postgres; the placeholder image files are uploaded to MinIO in Block 4.
+- **Block 3:** `packages/test-kit` exists now. It uses raw SQL fixtures only, so it cannot hide a domain bug by sharing its code.
+- **Block 3:** the use cases return `{ result, effects }`; effects (socket events, notifications) are also persisted in the same transaction, so a lost push is recovered from Postgres.
+- **Block 3:** the sweeper (`runSweep`) is the real timer; BullMQ jobs in Block 4 only make it faster.
+- **Block 3:** the test suite was mutation-checked by hand: deliberately removing the deposit release, the clock check and the forfeit each makes tests fail.

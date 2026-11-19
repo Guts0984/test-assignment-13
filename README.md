@@ -8,10 +8,12 @@ reconciles money.
 
 ## Repository
 
-| Path              | What                                                                                                                                                           |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/shared` | Zod input schemas, rule constants and pure rules: money, bid step, deposit, commission, the proxy-bid engine, the lot status machine, error codes, env helpers |
-| `packages/db`     | PostgreSQL: SQL migrations (tables, constraints, triggers, indexes), Drizzle schema, migration runner, restricted app role, seed, `db-init` Dockerfile         |
+| Path                | What                                                                                                                                                                                                                           |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/shared`   | Zod input schemas, rule constants and pure rules: money, bid step, deposit, commission, the proxy-bid engine, the lot status machine, error codes, env helpers                                                                 |
+| `packages/domain`   | Every business operation as a plain function `(deps, input) → result`: bids, buy-now, closing, payment, second chance, shipping, payout, moderation, top-ups, reconciliation, reports, the sweeper. Used by `api` and `worker` |
+| `packages/test-kit` | Test harness: a migrated template database cloned per test file, raw-SQL fixtures                                                                                                                                              |
+| `packages/db`       | PostgreSQL: SQL migrations (tables, constraints, triggers, indexes), Drizzle schema, migration runner, restricted app role, seed, `db-init` Dockerfile                                                                         |
 
 ## Development
 
@@ -70,6 +72,65 @@ Only the leader's max can exceed the current price, so the state needs nothing b
 bids that were accepted, in every arrival order. A property test checks every permutation of up
 to 5 bidders. A bid can still be rejected in one order and not another (BID_TOO_LOW once the
 price has passed it). That is the minimum-increment rule doing its job, not order dependence.
+
+## How bids, locks and transactions work (`packages/domain`)
+
+Every use case is a function that takes `deps` (`pool`, `clock`, `timings`) and returns its result
+plus the **effects** to push to clients after commit (socket events, in-app notifications). The
+same effects are stored in Postgres inside the transaction, so a lost push is recovered by the
+client catching up from the database.
+
+**One lock per lot.** Anything that changes a lot (bid, buy now, close, pay, expire, remove, edit)
+starts with `SELECT … FROM lots WHERE id = $1 FOR UPDATE`. That serialises everything on one lot,
+so 50 simultaneous bids are processed one after another in lock order and the pure engine always
+sees the state the previous bid left. Different lots proceed in parallel.
+
+`placeBid` in one transaction:
+
+1. advisory lock on `(user, 'bid', Idempotency-Key)` → replay the stored result if there is one;
+2. lock the lot; read the **server clock**; the engine decides (end time, minimum bid, own lot,
+   autobid maths, anti-sniping);
+3. lock the wallet accounts involved **in id order** and check the money (so "available is never
+   negative" is exact, not optimistic);
+4. release the displaced leader's deposit, lock or top up the bidder's deposit (ledger, in the
+   same transaction);
+5. insert the history rows, update the lot, write the numbered event, the outbid notification, the
+   throttled email and the search-sync outbox row;
+6. store the result under the idempotency key; commit.
+
+**Lock order, so nothing deadlocks:** lot → wallet accounts (ascending id) → rows hanging off them.
+Ledger entries are inserted in ascending account order too. A deadlock or serialisation failure
+still rolls back and retries the use case (up to four times); use cases are written to be safe to
+repeat. The fuzz test would show a deadlock as a failure.
+
+**Time is never taken from a job or a client.** Closing, payment expiry and auto-confirm compare
+the lot's own deadline with the server clock under the lot lock. So a stale job (the lot was
+extended after it was queued) does nothing, a duplicate job does nothing, and a bid one second
+after the end is refused even if no worker has closed the lot yet.
+
+**Money is only moved through `book()`** (`ledger.ts`), which creates accounts on demand, merges
+and sorts entries and writes one balanced transaction with a unique `ref`.
+
+**The sweeper is the real timer.** `runSweep` asks Postgres what is due (lots to close, payments
+to expire, shipments to auto-confirm, abandoned moderation claims) and runs the same idempotent
+handlers. BullMQ jobs, added later, are only an optimisation that runs them sooner; if Redis
+loses every job, the next sweep finds the same work.
+
+**Idempotency** (`Idempotency-Key`) covers bids, buy-now, payment and top-ups. The result is
+stored in the same transaction as the writes. Same key and body → the stored result, no new
+effects. Same key, different body → `IDEMPOTENCY_KEY_REUSED`. A rejection (`BID_TOO_LOW`) is a
+result too and replays. Parallel retries queue on the advisory lock, so only one runs.
+
+**Second chance.** When the payment (or offer) deadline passes: the deposit of the current buyer
+goes to the seller, a default is recorded, and the lot is offered for 24 hours to the participant
+with the next-highest maximum who has not been offered or defaulted yet, at that maximum. The lot
+stays `awaiting_payment` for that one user (a unique index allows one pending offer per lot), so
+nobody else can buy it. Nobody left → `ended_unsold`.
+
+**Moderation.** `claimNextLot` takes the oldest unclaimed lot with `FOR UPDATE SKIP LOCKED`:
+concurrent moderators skip each other's rows instead of waiting. A claim expires after 15
+minutes; after that the lot is claimable again and the slow moderator's decision is refused
+(`REVIEW_CLAIM_LOST`).
 
 ## Database (`packages/db`)
 
@@ -233,3 +294,18 @@ seeded lot is a state the engine could actually have reached. Placeholder photo 
    be switched off by application code or by anyone who steals its credentials.
 8. **Before the first bid the seller can still change prices and duration**, so the price and end
    time are allowed to move either way until then. From the first bid on, they only move forward.
+9. **Reserve price: what becomes visible.** Before the reserve is met, nothing in the API, events or
+   notifications can reveal it (tests scan every output for the amount). The public view only says
+   `reserveMet: true | false`. Because the price jumps to the reserve when a bid covers it (decision
+   1), the _price_ equals the reserve at the moment it is met; that is inherent to selling at the
+   reserve and is the only way it can be inferred.
+10. **A second-chance offeree pays from the wallet, no deposit.** Their earlier deposit was released
+    when they were outbid. Ignoring the offer costs nothing, but it is recorded as an unpaid win,
+    so it counts in the finance report.
+11. **Staff cannot trade.** Moderators and finance cannot bid, sell, buy, own a wallet or top up
+    (a domain error, and also refused by the database).
+12. **A bid that is accepted but immediately outbid by an autobid** locks no deposit, but the bidder
+    must be able to afford the deposit for what they offered, otherwise it is `INSUFFICIENT_FUNDS`.
+13. **Reports.** Turnover and commission are for lots _paid_ in the period (UTC dates). Commission is
+    computed with the payout formula, so it includes sales not yet paid out. "Unpaid share" =
+    payment defaults ÷ (winners + second-chance offers) in the period.
