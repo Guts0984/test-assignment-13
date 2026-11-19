@@ -93,7 +93,6 @@ export const LotView = ({ id }: { id: string }) => {
             onClick={() =>
               void moderationControllerRemove(id, { reason: why }).then(() => {
                 setGone(true);
-                void qc.invalidateQueries({ queryKey: getCatalogControllerLotQueryKey(id) });
               })
             }
             className="rounded bg-red-600 px-4 py-2 text-white disabled:opacity-50"
