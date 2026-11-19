@@ -18,7 +18,7 @@ import {
   seedId,
 } from './ids.js';
 import { createRng, type Rng } from './rng.js';
-import { CATEGORIES, CITIES, FIRST_NAMES, ITEM_ADJECTIVES, ITEM_NOUNS } from './reference.js';
+import { CATEGORIES, CATEGORY_ITEMS, CITIES, FIRST_NAMES, ITEM_ADJECTIVES } from './reference.js';
 
 /**
  * Builds the whole seed in memory as plain rows (snake_case = column names). It is pure: the
@@ -509,7 +509,7 @@ export const generateSeed = (cfg: SeedConfig): SeedData => {
     lots.push({
       id: lotId,
       seller_id: seedId(NS.user, plan.sellerIdx),
-      title: `${rng.pick(ITEM_ADJECTIVES)} ${rng.pick(ITEM_NOUNS)} #${plan.idx}`,
+      title: `${rng.pick(ITEM_ADJECTIVES)} ${rng.pick(CATEGORY_ITEMS[plan.categoryId - 1] ?? ['item'])}`,
       description: `Seed lot ${plan.idx}. Used item in working condition, pickup or shipping across Ukraine.`,
       category_id: plan.categoryId,
       city_id: plan.cityId,

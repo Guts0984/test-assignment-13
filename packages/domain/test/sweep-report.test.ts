@@ -155,7 +155,10 @@ describe('the sweeper replaces every timer (invariant 13: nothing depends on Red
       });
       f.clock.set(ends + 1);
       const [b, c] = await Promise.all([bid(f.deps, lot, a, UAH(100)), closeLot(f.deps, lot)]);
-      expect(b).toMatchObject({ ok: false, reason: 'LOT_ENDED' });
+      // Whichever of the two takes the lot lock first, the late bid is refused: by the clock (LOT_ENDED)
+      // or because the close already happened (LOT_NOT_ACTIVE). What must never happen is acceptance.
+      expect(b.ok).toBe(false);
+      expect(['LOT_ENDED', 'LOT_NOT_ACTIVE']).toContain((b as { reason: string }).reason);
       expect(c.result).toEqual({ status: 'unsold', reason: 'no_bids' });
     } finally {
       await f.close();

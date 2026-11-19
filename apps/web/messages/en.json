@@ -3,7 +3,8 @@
     "search": "Search",
     "wallet": "Wallet",
     "login": "Sign in",
-    "logout": "Sign out"
+    "logout": "Sign out",
+    "moderation": "Moderation"
   },
   "search": {
     "title": "Lots",
@@ -63,7 +64,8 @@
     "login": "Sign in",
     "name": "Name",
     "register": "Register",
-    "invalid": "Wrong email or password"
+    "invalid": "Wrong email or password",
+    "already": "You are already signed in as {name}"
   },
   "errors": {
     "BID_TOO_LOW": "Bid too low (minimum {minNextBid})",
@@ -74,5 +76,13 @@
     "VALIDATION_FAILED": "Check the form fields",
     "UNAUTHENTICATED": "Please sign in",
     "generic": "Something went wrong"
+  },
+  "fields": {
+    "TOPUP_TOO_LARGE": "Maximum top-up is 1,000,000 ₴",
+    "TOPUP_TOO_SMALL": "Minimum top-up is 1 ₴",
+    "MONEY_NOT_INTEGER_KOPECKS": "Use an amount with at most two decimals",
+    "MONEY_NOT_POSITIVE": "The amount must be above zero",
+    "RESERVE_BELOW_START": "The reserve cannot be below the start price",
+    "generic": "Invalid value"
   }
 }

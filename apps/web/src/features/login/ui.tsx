@@ -2,11 +2,17 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { type z } from 'zod';
 import { loginInputSchema } from '@auction/shared';
-import { authControllerLogin } from '../../shared/api/generated/client';
+import {
+  authControllerLogin,
+  getAuthControllerMeQueryKey,
+  useAuthControllerMe,
+} from '../../shared/api/generated/client';
 import { isApiError } from '../../shared/api/fetcher';
 
 type Values = z.input<typeof loginInputSchema>;
@@ -14,13 +20,21 @@ type Values = z.input<typeof loginInputSchema>;
 export const LoginForm = () => {
   const t = useTranslations('auth');
   const router = useRouter();
+  const locale = useLocale();
+  const qc = useQueryClient();
+  const me = useAuthControllerMe({ query: { retry: false } });
   const { register, handleSubmit, formState } = useForm<Values>({
     resolver: zodResolver(loginInputSchema),
     defaultValues: { email: '', password: '' },
   });
   const login = useMutation({
     mutationFn: (v: Values) => authControllerLogin(v),
-    onSuccess: () => router.push('wallet'),
+    onSuccess: async (u) => {
+      await qc.invalidateQueries({ queryKey: getAuthControllerMeQueryKey() });
+      router.push(
+        `/${locale}${u.role === 'moderator' ? '/moderation' : u.role === 'user' ? '/wallet' : ''}`,
+      );
+    },
   });
   const field = (name: keyof Values, label: string, type: string) => (
     <div>
@@ -40,6 +54,12 @@ export const LoginForm = () => {
       </p>
     </div>
   );
+  if (me.data)
+    return (
+      <p role="status" className="max-w-sm rounded bg-green-100 p-3">
+        {t('already', { name: me.data.displayName })}
+      </p>
+    );
   return (
     <form onSubmit={handleSubmit((v) => login.mutate(v))} className="max-w-sm space-y-3" noValidate>
       {field('email', t('email'), 'email')}

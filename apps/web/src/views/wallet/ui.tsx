@@ -8,7 +8,12 @@ export const WalletView = () => {
   const t = useTranslations('wallet');
   const money = useMoney();
   const w = useMeControllerWallet({ query: { retry: false } });
-  if (w.isError) return <p className="p-4">{t('signin')}</p>;
+  if (w.isError)
+    return (
+      <p className="p-4" role="status">
+        {t('signin')}
+      </p>
+    );
   return (
     <div className="mx-auto max-w-2xl space-y-4 p-4">
       <h1 className="text-2xl font-bold">{t('title')}</h1>

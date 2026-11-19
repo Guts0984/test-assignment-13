@@ -130,6 +130,7 @@ export const SearchView = () => {
               <Link href={`/${locale}/lots/${l.id}`} className="font-medium underline">
                 {l.title}
               </Link>
+              <p className="text-sm text-gray-500">{names.get(String(l.category_id))}</p>
               <p>{money(l.current_price)}</p>
               <p className="text-sm text-gray-600">{t('bids', { count: l.bid_count })}</p>
             </li>

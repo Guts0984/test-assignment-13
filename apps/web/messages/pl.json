@@ -3,7 +3,8 @@
     "search": "Szukaj",
     "wallet": "Portfel",
     "login": "Zaloguj",
-    "logout": "Wyloguj"
+    "logout": "Wyloguj",
+    "moderation": "Moderacja"
   },
   "search": {
     "title": "Aukcje",
@@ -63,7 +64,8 @@
     "login": "Zaloguj",
     "name": "Imię",
     "register": "Zarejestruj",
-    "invalid": "Zły e-mail lub hasło"
+    "invalid": "Zły e-mail lub hasło",
+    "already": "Jesteś już zalogowany jako {name}"
   },
   "errors": {
     "BID_TOO_LOW": "Oferta za niska (minimum {minNextBid})",
@@ -74,5 +76,13 @@
     "VALIDATION_FAILED": "Sprawdź pola formularza",
     "UNAUTHENTICATED": "Zaloguj się",
     "generic": "Coś poszło nie tak"
+  },
+  "fields": {
+    "TOPUP_TOO_LARGE": "Maksymalne doładowanie to 1 000 000 ₴",
+    "TOPUP_TOO_SMALL": "Minimalne doładowanie to 1 ₴",
+    "MONEY_NOT_INTEGER_KOPECKS": "Podaj kwotę z najwyżej dwoma miejscami po przecinku",
+    "MONEY_NOT_POSITIVE": "Kwota musi być większa od zera",
+    "RESERVE_BELOW_START": "Cena minimalna nie może być niższa od ceny początkowej",
+    "generic": "Nieprawidłowa wartość"
   }
 }
