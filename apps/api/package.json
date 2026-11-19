@@ -1,0 +1,49 @@
+{
+  "name": "@auction/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint --max-warnings 0 .",
+    "test": "vitest run",
+    "start": "node dist/main.js",
+    "openapi:generate": "node dist/openapi-cli.js"
+  },
+  "dependencies": {
+    "@auction/db": "workspace:*",
+    "@auction/domain": "workspace:*",
+    "@auction/payment-stub": "workspace:*",
+    "@auction/platform": "workspace:*",
+    "@auction/shared": "workspace:*",
+    "@aws-sdk/client-s3": "^3.1171.0",
+    "@aws-sdk/s3-request-presigner": "^3.1171.0",
+    "@nestjs/common": "^11.2.11",
+    "@nestjs/core": "^11.2.11",
+    "@nestjs/platform-express": "^11.2.11",
+    "@nestjs/platform-socket.io": "^11.2.11",
+    "@nestjs/swagger": "^11.4.8",
+    "@nestjs/websockets": "^11.2.11",
+    "@socket.io/redis-adapter": "^8.3.0",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.2.1",
+    "ioredis": "^5.11.1",
+    "meilisearch": "~0.63.0",
+    "nestjs-zod": "^5.6.0",
+    "pg": "^8.23.1",
+    "reflect-metadata": "~0.2.2",
+    "rxjs": "^7.8.2",
+    "socket.io": "^4.8.4",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@auction/test-kit": "workspace:*",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.19.2",
+    "@types/pg": "^8.23.1",
+    "socket.io-client": "^4.8.4",
+    "vitest": "^5.1.1"
+  }
+}

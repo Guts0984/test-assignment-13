@@ -132,6 +132,10 @@ concurrent moderators skip each other's rows instead of waiting. A claim expires
 minutes; after that the lot is claimable again and the slow moderator's decision is refused
 (`REVIEW_CLAIM_LOST`).
 
+## API (`apps/api`)
+
+REST + OpenAPI (`/docs`, generated into `apps/api/openapi.json` by `pnpm --filter @auction/api openapi:generate`) + Socket.IO over the Redis adapter. Every route must declare a policy (`@Public`, `@Optional`, `@Roles(...)`); a route without one answers 403 to everyone. Errors always look like `{ error: { code, message, details?, meta? }, requestId }`. State-changing requests need the `X-Requested-With: auction-web` header and a same-site Origin (CSRF); login is rate limited per address and locks an account after 5 failures; limits count the real client address and fall back to memory if Redis is down. Sockets authenticate from the session cookie at the handshake and can only ever join their own `user:` room.
+
 ## Worker, Redis, search, photos, mail (`apps/worker`, `packages/platform`)
 
 | Store       | Holds                                                                                                  | If lost                                                                                                                                                                     |
