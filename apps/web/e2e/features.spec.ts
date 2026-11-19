@@ -207,15 +207,15 @@ test.describe('notifications', () => {
   test('notification texts follow the language', async ({ browser, request }) => {
     // Create the notification ourselves: buyer1 bids, buyer3 outbids, so buyer1 has an "outbid" message.
     const lot = await pickLot(request);
-    const a = await signIn(browser, 'buyer1@seed.test');
-    const b = await signIn(browser, 'buyer3@seed.test');
+    const a = await signIn(browser, 'buyer5@seed.test');
+    const b = await signIn(browser, 'buyer2@seed.test');
     const bid = (ctx: typeof a.ctx, amount: number) =>
       ctx.request.post(`/api/lots/${lot.id}/bids`, {
         data: { kind: 'manual', amount },
-        headers: { 'x-requested-with': 'auction-web', 'idempotency-key': crypto.randomUUID() },
+        headers: { ...CSRF, 'Idempotency-Key': crypto.randomUUID() },
       });
-    expect((await bid(a.ctx, lot.price * 4 + 90_000)).status()).toBe(200);
-    expect((await bid(b.ctx, lot.price * 8 + 200_000)).status()).toBe(200);
+    expect((await bid(a.ctx, lot.price * 20 + 1_000_000)).status()).toBe(200);
+    expect((await bid(b.ctx, lot.price * 40 + 2_000_000)).status()).toBe(200);
     await a.page.goto('/uk/notifications');
     await expect(a.page.locator('[data-testid=notifications] li').first()).toBeVisible();
     const text = await a.page.locator('[data-testid=notifications]').innerText();
