@@ -100,7 +100,10 @@ export default tseslint.config(
       '@typescript-eslint/no-confusing-void-expression': 'off',
       '@typescript-eslint/no-deprecated': 'off',
       '@typescript-eslint/no-unnecessary-condition': 'off',
-      '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: { attributes: false } }],
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        { checksVoidReturn: { attributes: false } },
+      ],
       '@typescript-eslint/no-unnecessary-type-assertion': 'off',
       '@typescript-eslint/no-unnecessary-type-conversion': 'off',
     },
