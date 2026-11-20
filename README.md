@@ -41,6 +41,10 @@ docker compose up --build db-init      # postgres + migrations + app role + seed
 | Moderator | `moderator1@seed.test`, `moderator2@seed.test` |
 | Finance   | `finance1@seed.test`                           |
 
+Buyer and seller are not separate roles. Both are a plain `user`, and any user can bid on
+other people's lots and list lots of their own. The seed only labels the accounts by what they
+mostly do. A user can't bid on or buy their own lot (`OWN_LOT`).
+
 The demo buyers have more than 500 000 ₴ in their wallet. The other 9 987 users are
 `user<N>@seed.test`.
 
